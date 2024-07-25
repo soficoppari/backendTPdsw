@@ -1,0 +1,38 @@
+//Obtener todos las mascotas
+GET http://localhost:3000/api/mascota
+
+##Obtener una mascota por id
+GET http://localhost:3000/api/mascota/aaaa-bbbb-masc-ota1-0000
+
+##Crear una mascota
+POST http://localhost:3000/api/mascota/
+Content-Type: application/json
+
+{
+    "idMacota": "aaaa-bbbb-masc-ota2-0000",
+    "nombre": "ema",
+    "fechaNac": "2017/05/22",
+}
+
+##modificar una mascota (PUT - recurso completo)
+PUT http://localhost:3000/api/mascota/aaaa-bbbb-masc-ota1-0000
+Content-Type: application/json
+
+{
+    "idMacota": "aaaa-bbbb-masc-ota2-0000",
+    "nombre": "emuchi", //esto cambio
+    "fechaNac": "2017/05/22"
+    //puede estar mal esta parte
+}
+
+##modificar una mascota (PATCH - recurso parcial)
+PATCH http://localhost:3000/api/mascota/aaaa-bbbb-masc-ota4-0000
+Content-Type: application/json
+
+{
+    "nombre": "jack",
+    "fechaNac":"2020/10/27"
+}
+
+##Borrar una mascota
+DELETE http://localhost:3000/api/mascota/aaaa-bbbb-masc-ota9-0000

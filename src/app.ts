@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { Usuario } from './usuario.js';
+import { Mascota } from './MascotasBag/mascota.entity.js';
 
 const app = express();
 app.use(express.json());
@@ -26,6 +27,14 @@ const usuario = [
     ['gato','pez']
   ),
 ];
+
+const mascota = [
+  new Mascota(
+    'aaaa-bbbb-masc-ota1-0000',
+    'luke',
+    '2020/10/09',
+  )
+]
 
 // Middleware para sanitizar la entrada de los usuarios
 
@@ -54,6 +63,12 @@ function sanitizeUsuarioInput(req: Request, res: Response, next: NextFunction) {
 
 app.get('/api/usuario', (req, res) => {
   res.json({ data: usuario });
+});
+
+// OBTENER TODOS LAS MASCOTAS
+
+app.get('/api/mascota', (req, res) => {
+  res.json({ data: mascota });
 });
 
 // OBTENER UN USUARIO
