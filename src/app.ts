@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Usuario } from './usuario.js';
+import { Usuario } from './UsuarioBag/usuario.entity.js';
 import { Mascota } from './MascotasBag/mascota.entity.js';
 
 const app = express();
