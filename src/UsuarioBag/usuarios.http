@@ -33,7 +33,7 @@ Content-Type: application/json
 }
 
 ##modificar un usuario (PATCH - recurso parcial)
-PATCH http://localhost:3000/api/usuario/tg33-trg4-t4hg-3rde-uj1t
+PATCH http://localhost:3000/api/usuario/tg57-trg4-t4hg-3rde-uj9t
 Content-Type: application/json
 
 {
@@ -42,4 +42,4 @@ Content-Type: application/json
 }
 
 ##Borrar un usuario
-DELETE http://localhost:3000/api/usuario/tg33-trg4-t4hg-3rde-uj1t
+DELETE http://localhost:3000/api/usuario/tg57-trg4-t4hg-3rde-uj9t

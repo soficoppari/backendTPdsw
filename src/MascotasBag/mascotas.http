@@ -9,7 +9,7 @@ POST http://localhost:3000/api/mascota/
 Content-Type: application/json
 
 {
-    "idMacota": "aaaa-bbbb-masc-ota2-0000",
+    "idMascota": "aaaa-bbbb-masc-ota2-0000",
     "nombre": "ema",
     "fechaNac": "2017/05/22",
 }
@@ -19,7 +19,7 @@ PUT http://localhost:3000/api/mascota/aaaa-bbbb-masc-ota1-0000
 Content-Type: application/json
 
 {
-    "idMacota": "aaaa-bbbb-masc-ota2-0000",
+    "idMascota": "aaaa-bbbb-masc-ota2-0000",
     "nombre": "emuchi", //esto cambio
     "fechaNac": "2017/05/22"
     //puede estar mal esta parte

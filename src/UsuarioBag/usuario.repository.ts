@@ -31,4 +31,13 @@ public update(mascotas: { id: string; }): Usuario | undefined {
     usuario[indexC] = { ...usuario[indexC], ...mascotas }
   }
   return usuario[indexC]
- }}//falta MAS
+ }
+public delete(mascotas: { id: string; }): Usuario | undefined {
+  const indexC = usuario.findIndex((c) => c.idUsuario === mascotas.id);
+
+  if (indexC !== -1) {
+    const deletedUsuarios = usuario[indexC]
+    usuario.splice(indexC, 1)
+    return deletedUsuarios
+  }}
+}//falta MAS
