@@ -24,8 +24,8 @@ public add(mascotas: Usuario): Usuario | undefined {
   usuario.push(mascotas)
   return mascotas
 }
-public update(mascotas: { id: string; }): Usuario | undefined {
-  const indexC = usuario.findIndex((c) => c.idUsuario === mascotas.id);
+public update(mascotas: Usuario): Usuario | undefined {
+  const indexC = usuario.findIndex((c) => c.idUsuario === mascotas.idUsuario);
   
   if (indexC !== -1) {
     usuario[indexC] = { ...usuario[indexC], ...mascotas }
@@ -40,4 +40,4 @@ public delete(mascotas: { id: string; }): Usuario | undefined {
     usuario.splice(indexC, 1)
     return deletedUsuarios
   }}
-}//falta MAS
+}

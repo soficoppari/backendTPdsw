@@ -1,10 +1,12 @@
-//Obtener todos los usuarios
-GET http://localhost:3000/api/usuario
+GET http://localhost:3000/api/usuario 
 
-##Obtener un usuario por id
+#####
+
 GET http://localhost:3000/api/usuario/tg56-trg4-t4hg-3rde-uj6t
 
-##Crear un usuario
+
+####
+
 POST http://localhost:3000/api/usuario/
 Content-Type: application/json
 
@@ -18,12 +20,13 @@ Content-Type: application/json
     "mascotas": ["gato","perra"]
 }
 
-##modificar un usuario (PUT - recurso completo)
+####
+//NO SE POR QUE NO FUNCIONA
 PUT http://localhost:3000/api/usuario/tg56-trg4-t4hg-3rde-uj6t
 Content-Type: application/json
 
 {
-     "idUsuario": "tg88-trg4-t4hg-3rde-uj9t",
+    "idUsuario": "tg88-trg4-t4hg-3rde-uj9t",
     "nombre": "sofia",
     "apellido": "coppari",
     "email": "sofiacoppari@gmail.com",
@@ -32,8 +35,10 @@ Content-Type: application/json
     "mascotas": ["huron","conejo"]
 }
 
-##modificar un usuario (PATCH - recurso parcial)
-PATCH http://localhost:3000/api/usuario/tg57-trg4-t4hg-3rde-uj9t
+####
+
+
+PATCH http://localhost:3000/api/usuario/tg56-trg4-t4hg-3rde-uj6t
 Content-Type: application/json
 
 {
@@ -41,5 +46,6 @@ Content-Type: application/json
     "nroTelefono":554
 }
 
-##Borrar un usuario
-DELETE http://localhost:3000/api/usuario/tg57-trg4-t4hg-3rde-uj9t
+####
+
+DELETE http://localhost:3000/api/usuario/tg59-trg4-t4hg-3rde-uj4t
