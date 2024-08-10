@@ -1,40 +1,13 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Mascota } from './MascotasBag/mascota.entity.js';
 import { Veterinaria } from './Veterinaria/veterinaria.entity.js';
-import { MascotaRepository } from './MascotasBag/mascota.repository.js';
 import { usuarioRouter } from './UsuarioBag/usuario.routes.js';
+import { mascotaRouter } from './MascotasBag/mascota.routes.js';
 
 const app = express();
 app.use(express.json());
 
 
 //Date format: YYYY-MM-DD
-
-
-const repositoryM= new MascotaRepository()
-
-
-
-
-// Middleware para sanitizar la entrada de las mascotas
-
-function sanitizeMascotaInput(req: Request, res: Response, next: NextFunction) {
-  req.body.sanitizedInput = {
-    idMascota: req.body.idMascota,
-    nombre: req.body.nombre,
-    fechaNac: req.body.fechaNac,
-  };
-
-  // Eliminar propiedades indefinidas
-  Object.keys(req.body.sanitizedInput).forEach((key) => {
-    if (req.body.sanitizedInput[key] === undefined) {
-      delete req.body.sanitizedInput[key];
-    }
-  });
-
-  next();
-}
-
 
 
 function sanitizeVeterinariaInput(req: Request, res: Response, next: NextFunction) {
@@ -63,13 +36,8 @@ function sanitizeVeterinariaInput(req: Request, res: Response, next: NextFunctio
 // // OBTENER TODOS LOS USUARIOS
 
 app.use('/api/usuario', usuarioRouter)
+app.use('/api/mascota', mascotaRouter)
 
-
-// // OBTENER TODOS LAS MASCOTAS
-
-// app.get('/api/mascota', (req, res) => {
-//   res.json({ data: repositoryM.findAll() });
-// });
 
 // // OBTENER TODAS LAS VETERINARIAS
 
@@ -78,17 +46,7 @@ app.use('/api/usuario', usuarioRouter)
 // });
 
 
-// // OBTENER UNA MASCOTA
 
-// app.get('/api/mascota/:idMascota', (req, res) => {
-//   const id= req.params.idMascota
-//   const mascota= repositoryM.findOne({id})
-//   if (!mascota) {
-//     res.status(404).send({ message: 'mascota not found' });
-//   } else {
-//     res.json({ data: mascota });
-//   }
-// });
 
 
 // // OBTENER UNA VETERINARIA
@@ -124,21 +82,6 @@ app.use('/api/usuario', usuarioRouter)
 
 
 
-// // CREAR UNA MASCOTA
-
-// app.post('/api/mascota', sanitizeMascotaInput, (req, res) => {
-//   const input = req.body.sanitizedInput;
-
-//   const newMascota = new Mascota(
-//     input.idMascota,
-//     input.nombre,
-//     input.fechaNac, 
-//   );
-
-//   const mascota= repositoryM.add(newMascota)
-//   return res.status(201).json({ message: 'mascota created', data: newMascota });
-// });
-
 // // MODIFICAR UN USUARIO COMPLETAMENTE
 
 // app.put('/api/usuario/:idUsuario', sanitizeUsuarioInput, (req, res) => {
@@ -153,19 +96,6 @@ app.use('/api/usuario', usuarioRouter)
 // });
 
 
-// // MODIFICAR UNA MASCOTA COMPLETAMENTE
-
-// app.put('/api/mascota/:idMascota', sanitizeMascotaInput, (req, res) => {
-//   req.body.sanitizedInput.idMascota=req.params.idMascota
-//   const mascota=repositoryM.update(req.body.sanitizedInput)
-
-//   if (!mascota) {
-//     res.status(404).send({ message: 'mascota not found' });
-//   }
-  
-//   return res.status(200).json({ message: 'mascota updated', data: mascota});
-// });
-
 
 // // MODIFICAR UN VETERINARIA COMPLETAMENTE
 
@@ -179,23 +109,6 @@ app.use('/api/usuario', usuarioRouter)
 //   res
 //     .status(200)
 //     .json({ message: 'Veterinaria updated', data: veterinaria[indexC] });
-// });
-
-
-
-
-
-// // MODIFICAR UNA MASCOTA PARCIALMENTE
-
-// app.patch('/api/mascota/:idMascota', sanitizeMascotaInput, (req, res) => {
-//   req.body.sanitizedInput.idMascota=req.params.idMascota
-//   const mascota=repositoryM.update(req.body.sanitizedInput)
-
-//   if (!mascota) {
-//     res.status(404).send({ message: 'mascota not found' });
-//   }
-  
-//   return res.status(200).json({ message: 'mascota updated', data: mascota});
 // });
 
 
@@ -216,19 +129,6 @@ app.use('/api/usuario', usuarioRouter)
 
 
 
-// // BORRAR UNA MASCOTA
-
-// app.delete('/api/mascota/:idMascota', (req, res) => {
-//   const id= req.params.idMascota
-//   const mascota= repositoryM.delete({id})
-  
-//   if (!mascota) {
-//     res.status(404).send({ message: 'mascota not found' });
-//   }
-//   res.status(200).json({ message: 'mascota deleted' });
-// });
-
-
 // // BORRAR UNA VETERINARIA
 
 // app.delete('/api/veterinaria/:idVeterinaria', (req, res) => {
@@ -240,6 +140,8 @@ app.use('/api/usuario', usuarioRouter)
 //   veterinaria.splice(indexC, 1);
 //   res.status(200).json({ message: 'veterinaria deleted' });
 // });
+
+
 
 // LISTEN
 
