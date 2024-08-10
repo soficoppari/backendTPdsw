@@ -11,7 +11,7 @@ POST http://localhost:3000/api/usuario/
 Content-Type: application/json
 
 {
-   "idUsuario": "tg59-trg4-t4hg-3rde-uj4t",
+   //"idUsuario": "tg59-trg4-t4hg-3rde-uj4t",
     "nombre": "ramiro",
     "apellido": "garcia",
     "email": "ramirogarcia@gmail.com",
@@ -21,7 +21,6 @@ Content-Type: application/json
 }
 
 ####
-//NO SE POR QUE NO FUNCIONA
 PUT http://localhost:3000/api/usuario/tg56-trg4-t4hg-3rde-uj6t
 Content-Type: application/json
 
@@ -30,7 +29,7 @@ Content-Type: application/json
     "nombre": "sofia",
     "apellido": "coppari",
     "email": "sofiacoppari@gmail.com",
-    "nroTelefono":000,
+    "nroTelefono":200,
     "contraseniaUser": "000",
     "mascotas": ["huron","conejo"]
 }
