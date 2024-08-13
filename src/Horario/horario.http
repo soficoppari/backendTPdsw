@@ -1,0 +1,40 @@
+GET http://localhost:3000/api/horario
+
+#####
+
+GET http://localhost:3000/api/hoarario/2024-08-09T10:00:00
+
+
+####
+
+POST http://localhost:3000/api/horario/
+Content-Type: application/json
+
+{
+   "FechaHoraIni": "2024-12-09T14:00:00",
+   "FechaHoraFin": "2024-12-09T15:00:00"
+   
+}
+
+####
+PUT http://localhost:3000/api/veterinaria/2024-08-09T10:00:00
+Content-Type: application/json
+
+{
+   "FechaHoraIni": "2024-07-09T16:00:00",
+   "FechaHoraFin": "2024-07-09T17:00:00"
+}
+
+####
+
+
+PATCH http://localhost:3000/api/veterinaria/2024-07-09T16:00:00
+Content-Type: application/json
+
+{
+    "FechaHoraFin": "2024-07-09T18:00:00"
+}
+
+####
+
+DELETE http://localhost:3000/api/veterinaria/2024-12-09T14:00:00
