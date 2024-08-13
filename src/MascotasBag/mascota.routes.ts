@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { sanitizeMascotaInput, findAll, findOne, add, update, remove } from "./mascota.controler.js";
 
-
 export const mascotaRouter= Router()
 mascotaRouter.get('/', findAll)
 mascotaRouter.get('/:idMascota', findOne)

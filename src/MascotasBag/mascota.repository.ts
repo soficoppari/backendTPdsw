@@ -15,22 +15,26 @@ export class MascotaRepository implements Repository<Mascota>{
   public findAll(): Mascota[] | undefined {
     return mascota
   }
-public findOne(mascotas: { id: string; }): Mascota | undefined {
+
+  public findOne(mascotas: { id: string; }): Mascota | undefined {
  return mascota.find((c) => c.idMascota === mascotas.id)
 }
-public add(mascotas: Mascota): Mascota | undefined {
-  mascota.push(mascotas)
-  return mascotas
+
+public add(inst: Mascota): Mascota | undefined {
+  mascota.push(inst)
+  return inst
 }
-public update(mascotas: Mascota): Mascota | undefined {
-  const indexC = mascota.findIndex((c) => c.idMascota === mascotas.idMascota);
+
+public update(inst: Mascota): Mascota | undefined {
+  const indexM = mascota.findIndex((m) => m.idMascota === inst.idMascota);
   
-  if (indexC !== -1) {
-    mascota[indexC] = { ...mascota[indexC], ...mascotas }
+  if (indexM !== -1) {
+    mascota[indexM] = { ...mascota[indexM], ...inst }
   }
-  return mascota[indexC]
+  return mascota[indexM]
  }
-public delete(mascotas: { id: string; }): Mascota | undefined {
+
+ public delete(mascotas: { id: string; }): Mascota | undefined {
   const indexC = mascota.findIndex((c) => c.idMascota === mascotas.id);
 
   if (indexC !== -1) {

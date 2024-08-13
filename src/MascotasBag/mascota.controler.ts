@@ -45,12 +45,11 @@ function findOne(req:Request, res:Response) {
     input.idMascota,
     input.nombre,
     input.fechaNac,
-    
   );
-  const mascota= repositoryM.add(newMascota)
+
+    // const mascota= repositoryM.add(newMascota)
    return res.status(201).json({ message: 'mascota created', data: newMascota });
 };
-
 
 
 

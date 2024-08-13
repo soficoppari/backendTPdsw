@@ -8,26 +8,22 @@ GET http://localhost:3000/api/mascota/aaaa-bbbb-masc-ota1-0000
 ####
 
 POST http://localhost:3000/api/mascota/
-
 Content-Type: application/json
 
 {
+    "idMascota": "aaaa-bbbb-masc-ota2-0000",
     "nombre": "ema",
-    "fechaNac": "2017/05/22",
-    //"idMascota": "aaaa-bbbb-masc-ota2-0000",
-
+    "fechaNac": "2017-05-22"
 }   
 
-//NO SE POR QUE NO FUNCIONA BIEN (CREA MASCOTAS CON ID RANDOM PERO SIN ATRIBUTOS)
 
 
 ####
 PUT http://localhost:3000/api/mascota/aaaa-bbbb-masc-ota1-0000
-
 Content-Type: application/json
 
 {
-    //"idMascota": "aaaa-bbbb-masc-ota2-0000",
+    "idMascota": "aaaa-bbbb-masc-ota2-0000",
     "nombre": "emuchi", 
     "fechaNac": "2017/05/22"
 

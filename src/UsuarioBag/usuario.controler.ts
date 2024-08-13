@@ -53,7 +53,7 @@ function findOne(req:Request, res:Response) {
     input.mascotas
   );
 
-  const usuario= repositoryU.add(newUsuario)
+  // const usuario= repositoryU.add(newUsuario)
    return res.status(201).json({ message: 'usuario created', data: newUsuario });
 };
 

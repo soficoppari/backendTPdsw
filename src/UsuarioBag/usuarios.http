@@ -11,7 +11,7 @@ POST http://localhost:3000/api/usuario/
 Content-Type: application/json
 
 {
-   //"idUsuario": "tg59-trg4-t4hg-3rde-uj4t",
+   "idUsuario": "tg59-trg4-t4hg-3rde-uj4t",
     "nombre": "ramiro",
     "apellido": "garcia",
     "email": "ramirogarcia@gmail.com",
@@ -47,4 +47,4 @@ Content-Type: application/json
 
 ####
 
-DELETE http://localhost:3000/api/usuario/tg59-trg4-t4hg-3rde-uj4t
+DELETE http://localhost:3000/api/usuario/tg56-trg4-t4hg-3rde-uj6t
