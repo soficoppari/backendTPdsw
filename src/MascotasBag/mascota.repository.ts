@@ -20,9 +20,9 @@ export class MascotaRepository implements Repository<Mascota>{
  return mascota.find((c) => c.idMascota === mascotas.id)
 }
 
-public add(inst: Mascota): Mascota | undefined {
-  mascota.push(inst)
-  return inst
+public add(item: Mascota): Mascota | undefined {
+  mascota.push(item)
+  return item
 }
 
 public update(inst: Mascota): Mascota | undefined {

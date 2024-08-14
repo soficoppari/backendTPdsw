@@ -8,11 +8,11 @@ const veterinarias = [
     'VetMax',
     'rioja 123',
     3413685420,
-    'vetmax@gmail.com',
+    'vetmax@gmail.com'
   )
 ]
 
-export class VeterinariaRepository implements Repository<Veterinaria> {
+export class VeterinariaRepository implements Repository<Veterinaria>{
     public findAll(): Veterinaria[] | undefined {
         return veterinarias
     }
@@ -25,14 +25,16 @@ export class VeterinariaRepository implements Repository<Veterinaria> {
         veterinarias.push(item)
         return item
     }
-    public update(item: Veterinaria): Veterinaria | undefined {
-    const veterinariaIdx = veterinarias.findIndex((veterinaria) => veterinaria.idVeterinaria === item.idVeterinaria);
+
+
+public update(item: Veterinaria): Veterinaria | undefined {
+    const veterinariaIdx = veterinarias.findIndex((veterinaria) => veterinaria.idVeterinaria === item.idVeterinaria)
 
     if (veterinariaIdx !== -1) {
-        veterinarias[veterinariaIdx] = { ...veterinarias[veterinariaIdx], ...item };
-        return veterinarias[veterinariaIdx];
+      veterinarias[veterinariaIdx] = { ...veterinarias[veterinariaIdx], ...item }
     }
-}
+    return veterinarias[veterinariaIdx]
+  }
 
 public delete(item: { id: string; }): Veterinaria | undefined {
     const veterinariaIdx = veterinarias.findIndex((veterinaria) => veterinaria.idVeterinaria === item.id);
