@@ -3,6 +3,8 @@ import { usuarioRouter } from './UsuarioBag/usuario.routes.js';
 import { mascotaRouter } from './MascotasBag/mascota.routes.js';
 import { veterinariaRouter } from './Veterinaria/veterinaria.routes.js';
 import { horarioRouter } from './Horario/horario.routes.js';
+import { antecedenteRouter } from './AntecedentesBag/antecedente.routes.js';
+
 
 
 const app = express();
@@ -15,6 +17,8 @@ app.use('/api/usuario', usuarioRouter)
 app.use('/api/mascota', mascotaRouter)
 app.use('/api/veterinaria', veterinariaRouter)
 app.use('/api/horarios', horarioRouter)
+app.use('/api/antecedentes', antecedenteRouter)
+
 
 //
 
