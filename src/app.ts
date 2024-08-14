@@ -4,12 +4,9 @@ import { mascotaRouter } from './MascotasBag/mascota.routes.js';
 import { veterinariaRouter } from './Veterinaria/veterinaria.routes.js';
 import { horarioRouter } from './Horario/horario.routes.js';
 
+
 const app = express();
 app.use(express.json());
-
-
-
-
 
 
 // // OBTENER TODOS LOS USUARIOS
@@ -24,6 +21,7 @@ app.use('/api/horarios', horarioRouter)
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' })
 })
+
 
 // LISTEN
 
