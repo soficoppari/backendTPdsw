@@ -11,7 +11,7 @@ POST http://localhost:3000/api/veterinaria/
 Content-Type: application/json
 
 {
-   "idVeterinaria": "tg59-trg4-t4hg-3rde-papa",
+   //"idVeterinaria": "tg59-trg4-t4hg-3rde-bro",
    "contraseniaVet": "12345",
     "nombreVet": "Vet24",
     "direccion": "Piagio 123",
@@ -24,8 +24,8 @@ PUT http://localhost:3000/api/veterinaria/tg56-trg4-t4hg-3rde-papa
 Content-Type: application/json
 
 {
-      "idVeterinaria": "tg59-trg4-t4hg-3rde-mama",
-   "contraseniaVet": "12345",
+    //"idVeterinaria": "tg59-trg4-t4hg-3rde-mama",
+    "contraseniaVet": "12345",
     "nombreVet": "Veter",
     "direccion": "Oroño 456",
     "nroTelefono":3414379430,
@@ -39,7 +39,7 @@ PATCH http://localhost:3000/api/veterinaria/tg56-trg4-t4hg-3rde-papa
 Content-Type: application/json
 
 {
-     "email": "mailnuevo@gmail.com",
+    "email": "mailnuevo@gmail.com",
     "nroTelefono":554
 }
 
