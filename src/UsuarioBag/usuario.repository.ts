@@ -1,14 +1,19 @@
 import { Repository } from "../shared/repository.js";
 import { Usuario } from "./usuario.entity.js";
+// import { Mascota } from "../MascotasBag/mascota.entity.js";
+
+// const newmasc= new Mascota("20-21-12-33-11", "george", "sabado")
+// const mascotas: Mascota[]=[newmasc]
 
 const usuario = [
   new Usuario(
-     'tg56-trg4-t4hg-3rde-uj6t',
+    'tg56-trg4-t4hg-3rde-uj6t',
     'santino',
     'chibotta',
     'santichibotta@gmail.com',
     341,
     '341',
+    //mascotas
     ['loro','perro']
   )
 ]

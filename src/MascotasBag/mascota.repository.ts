@@ -43,3 +43,5 @@ public update(inst: Mascota): Mascota | undefined {
     return deletedMascotas
   }}
 }
+
+export{mascota}

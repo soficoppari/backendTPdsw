@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+import { Mascota } from '../MascotasBag/mascota.entity.js';
 
 export class Usuario{
   constructor(
@@ -9,5 +10,6 @@ export class Usuario{
     public nroTelefono:number,
     public contraseniaUser:string,
     public mascotas:string[]
+    // public mascotas:Mascota[]
         ){}
 }

@@ -25,7 +25,6 @@ PUT http://localhost:3000/api/usuario/tg56-trg4-t4hg-3rde-uj6t
 Content-Type: application/json
 
 {
-    "idUsuario": "tg88-trg4-t4hg-3rde-uj9t",
     "nombre": "sofia",
     "apellido": "coppari",
     "email": "sofiacoppari@gmail.com",
@@ -41,7 +40,8 @@ PATCH http://localhost:3000/api/usuario/tg56-trg4-t4hg-3rde-uj6t
 Content-Type: application/json
 
 {
-    "email": "mailnuevo@gmail.com",
+    
+    "email": "mailnuevoo@gmail.com",
     "nroTelefono":554
 }
 
