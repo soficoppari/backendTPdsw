@@ -1,8 +1,8 @@
 export interface Repository<T> {
-  findAll(): T[] | undefined
-  findOne(mascotas: {id: string; fechaI: Date; fechaF:Date}): T | undefined  //modificable el mascotas: id string
-  add (mascotas: T): T | undefined
-  update(mascotas: T): T | undefined
-  delete(mascotas: {id: string; fechaI:Date ; fechaF:Date}): T | undefined
+  findAll(): Promise<T[] | undefined>
+  findOne(inst: {id: string; fechaI: Date; fechaF:Date}): Promise<T | undefined>  //modificable el mascotas: id string
+  add (inst: T): Promise<T | undefined>
+  update(inst: T): Promise<T | undefined>
+  delete(inst: {id: string; fechaI:Date ; fechaF:Date}): Promise<T | undefined>
   
 }
