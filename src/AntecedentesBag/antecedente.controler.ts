@@ -21,20 +21,20 @@ function sanitizeAntecedenteInput(req: Request, res: Response, next: NextFunctio
   next()
 }
 
-function findAll(req: Request, res: Response) {
-  res.json({ data: repository.findAll() })
+async function findAll(req: Request, res: Response) {
+  res.json({ data: await repository.findAll() })
 }
 
-function findOne(req: Request, res: Response) {
+async function findOne(req: Request, res: Response) {
   const id = req.params.id
-  const antecedente = repository.findOne({ id })
+  const antecedente = await repository.findOne({ id })
   if (!antecedente) {
     return res.status(404).send({ message: 'Antecedente not found' })
   }
   res.json({ data: antecedente })
 }
 
-function add(req: Request, res: Response) {
+async function add(req: Request, res: Response) {
   const input = req.body.sanitizedInput
 
   const antecedenteInput = new Antecedente(
@@ -44,13 +44,13 @@ function add(req: Request, res: Response) {
     input.id
   )
 
-  const antecedente = repository.add(antecedenteInput)
+  const antecedente = await repository.add(antecedenteInput)
   return res.status(201).send({ message: 'Antecedente created', data: antecedente })
 }
 
-function update(req: Request, res: Response) {
+async function update(req: Request, res: Response) {
   req.body.sanitizedInput.id = req.params.id
-  const antecedente = repository.update(req.body.sanitizedInput)
+  const antecedente = await repository.update(req.body.sanitizedInput)
 
   if (!antecedente) {
     return res.status(404).send({ message: 'Antecedente not found' })
@@ -59,9 +59,9 @@ function update(req: Request, res: Response) {
   return res.status(200).send({ message: 'Antecedente updated successfully', data: antecedente })
 }
 
-function remove(req: Request, res: Response) {
+async function remove(req: Request, res: Response) {
   const id = req.params.id
-  const antecedente = repository.delete({ id })
+  const antecedente = await repository.delete({ id })
 
   if (!antecedente) {
     res.status(404).send({ message: 'Antecedente not found' })
