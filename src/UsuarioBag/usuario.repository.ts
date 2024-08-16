@@ -1,11 +1,13 @@
+import { dbU } from "../shared/bd/conn.js";
 import { Repository } from "../shared/repository.js";
 import { Usuario } from "./usuario.entity.js";
 // import { Mascota } from "../MascotasBag/mascota.entity.js";
 
+
 // const newmasc= new Mascota("20-21-12-33-11", "george", "sabado")
 // const mascotas: Mascota[]=[newmasc]
 
-const usuario = [
+const usuarioArray = [
   new Usuario(
     'tg56-trg4-t4hg-3rde-uj6t',
     'santino',
@@ -18,27 +20,30 @@ const usuario = [
   )
 ]
 
+
+const usuario= dbU.collection<Usuario>("LosUsuarios")
+
 export class UsuarioRepository implements Repository<Usuario>{
-  public findAll(): Usuario[] | undefined {
-    return usuario
+  public async findAll(): Promise<Usuario[] | undefined> {
+    return await usuario.find().toArray()
   }
-public findOne(mascotas: { id: string; }): Usuario | undefined {
- return usuario.find((c) => c.idUsuario === mascotas.id)
+public async findOne(inst: { id: string; }): Promise<Usuario | undefined> {
+ return await usuario.find((c) => c.idUsuario === inst.id)
 }
-public add(mascotas: Usuario): Usuario | undefined {
-  usuario.push(mascotas)
-  return mascotas
+public async add(inst: Usuario): Promise<Usuario | undefined> {
+  await usuario.push(inst)
+  return inst
 }
-public update(mascotas: Usuario): Usuario | undefined {
-  const indexC = usuario.findIndex((c) => c.idUsuario === mascotas.idUsuario);
+public async update(inst: Usuario): Promise<Usuario | undefined> {
+  const indexC = await usuario.findIndex((c) => c.idUsuario === inst.idUsuario);
   
   if (indexC !== -1) {
-    usuario[indexC] = { ...usuario[indexC], ...mascotas }
+    usuario[indexC] = { ...usuario[indexC], ...inst }
   }
   return usuario[indexC]
  }
-public delete(mascotas: { id: string; }): Usuario | undefined {
-  const indexC = usuario.findIndex((c) => c.idUsuario === mascotas.id);
+public async delete(inst: { id: string; }): Promise<Usuario | undefined> {
+  const indexC = await usuario.findIndex((c) => c.idUsuario === inst.id);
 
   if (indexC !== -1) {
     const deletedUsuarios = usuario[indexC]
