@@ -1,7 +1,8 @@
 import { Repository } from '../shared/repository.js'
 import { Antecedente } from './antecedente.entity.js'
+import {db} from '../shared/db/conn.js'
 
-const antecedentes = [
+const antecedentesArray = [
   new Antecedente(
   'deschistoria',
   new Date("2024-09-12T10:00:00"),
@@ -10,22 +11,24 @@ const antecedentes = [
   ),
 ]
 
+const antecedentes =dbA.collection<Antecedente>('LosAntecedentes')
+
 export class AntecedenteRepository implements Repository<Antecedente> {
-  public findAll(): Antecedente[] | undefined {
-    return antecedentes
+  public async findAll(): Promise<Antecedente[] | undefined> {
+    return await antecedentes.find().toArray()
   }
 
-  public findOne(item: { id: string }): Antecedente | undefined {
-    return antecedentes.find((antecedente) => antecedente.id.toString() === item.id)
+  public async findOne(item: { id: string }): Promise<Antecedente | undefined> {
+    return await antecedentes.find((antecedente) => antecedente.id.toString() === item.id)
   }
 
-  public add(item: Antecedente): Antecedente | undefined {
-    antecedentes.push(item)
+  public async add(item: Antecedente): Promise<Antecedente | undefined> {
+    await antecedentes.push(item)
     return item
   }
 
-  public update(item: Antecedente): Antecedente | undefined {
-    const antecedenteIdx = antecedentes.findIndex((antecedente) => antecedente.id == item.id)
+  public async update(item: Antecedente): Promise<Antecedente | undefined> {
+    const antecedenteIdx = await antecedentes.findIndex((antecedente) => antecedente.id == item.id)
 
     if (antecedenteIdx !== -1) {
       antecedentes[antecedenteIdx] = { ...antecedentes[antecedenteIdx], ...item }
@@ -33,8 +36,8 @@ export class AntecedenteRepository implements Repository<Antecedente> {
     return antecedentes[antecedenteIdx]
   }
 
-  public delete(item: { id: string }): Antecedente | undefined {
-    const antecedenteIdx = antecedentes.findIndex((antecedente) => antecedente.id.toString() === item.id)
+  public async delete(item: { id: string }): Promise<Antecedente | undefined> {
+    const antecedenteIdx = await antecedentes.findIndex((antecedente) => antecedente.id.toString() === item.id)
 
     if (antecedenteIdx !== -1) {
       const deletedAntecedentes = antecedentes[antecedenteIdx]
