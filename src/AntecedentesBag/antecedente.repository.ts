@@ -22,7 +22,7 @@ export class AntecedenteRepository implements Repository<Antecedente> {
   public async findOne(item: { id: string }): Promise<Antecedente | undefined> {
     const _id = new ObjectId(item.id)
     return (await antecedentes.findOne({ _id })) || undefined
-    //return await antecedentes.find((antecedente) => antecedente.id.toString() === item.id)
+    //return await antecedentes.find((antecedente) => antecedente.id.toString() === item.id
   }
 
   public async add(item: Antecedente): Promise<Antecedente | undefined> {
