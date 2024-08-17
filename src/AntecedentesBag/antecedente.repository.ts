@@ -1,6 +1,9 @@
 import { Repository } from '../shared/repository.js'
 import { Antecedente } from './antecedente.entity.js'
-import { dbA } from '../shared/bd/conn.js'
+
+import {dbA} from '../shared/bd/conn.js'
+import { ObjectId } from 'mongodb'
+
 
 const antecedentesArray = [
   new Antecedente(
@@ -19,30 +22,24 @@ export class AntecedenteRepository implements Repository<Antecedente> {
   }
 
   public async findOne(item: { id: string }): Promise<Antecedente | undefined> {
-    return await antecedentes.find((antecedente) => antecedente.id.toString() === item.id)
+    const _id = new ObjectId(item.id)
+    return (await antecedentes.findOne({ _id })) || undefined
+    //return await antecedentes.find((antecedente) => antecedente.id.toString() === item.id
   }
 
   public async add(item: Antecedente): Promise<Antecedente | undefined> {
-    await antecedentes.push(item)
+    item._id = (await antecedentes.insertOne(item)).insertedId
     return item
   }
 
   public async update(item: Antecedente): Promise<Antecedente | undefined> {
-    const antecedenteIdx = await antecedentes.findIndex((antecedente) => antecedente.id == item.id)
-
-    if (antecedenteIdx !== -1) {
-      antecedentes[antecedenteIdx] = { ...antecedentes[antecedenteIdx], ...item }
-    }
-    return antecedentes[antecedenteIdx]
+    const {id, ...antecedenteInput}=item
+    const _id = new ObjectId(id)
+    return (await antecedentes.findOneAndUpdate({ _id }, { $set: antecedenteInput }, { returnDocument: 'after' })) || undefined
   }
 
   public async delete(item: { id: string }): Promise<Antecedente | undefined> {
-    const antecedenteIdx = await antecedentes.findIndex((antecedente) => antecedente.id.toString() === item.id)
-
-    if (antecedenteIdx !== -1) {
-      const deletedAntecedentes = antecedentes[antecedenteIdx]
-      antecedentes.splice(antecedenteIdx, 1)
-      return deletedAntecedentes
-    }
+    const _id = new ObjectId(item.id)
+    return (await antecedentes.findOneAndDelete({ _id })) || undefined
   }
 }

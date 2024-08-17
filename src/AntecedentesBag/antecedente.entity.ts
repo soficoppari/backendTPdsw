@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb'
 
 class IdGenerator {
   private static currentId: number = 0;
@@ -13,6 +14,7 @@ export class Antecedente {
     public fecha: Date,
     public nombreMotivo: string,
     public id=(IdGenerator.getNextId()),
+    public _id?: ObjectId
   ) {}
 }
 
