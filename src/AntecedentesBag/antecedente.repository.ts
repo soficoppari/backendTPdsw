@@ -1,7 +1,9 @@
 import { Repository } from '../shared/repository.js'
 import { Antecedente } from './antecedente.entity.js'
+
 import {dbA} from '../shared/bd/conn.js'
 import { ObjectId } from 'mongodb'
+
 
 const antecedentesArray = [
   new Antecedente(

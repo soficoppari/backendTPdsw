@@ -26,13 +26,13 @@ function sanitizeVeterinariaInput(req: Request, res: Response, next: NextFunctio
   next();
 }
 
-function findAll(req:Request, res:Response) {
-  res.json({ data: repositoryV.findAll() });
+async function findAll(req:Request, res:Response) {
+  res.json({ data: await repositoryV.findAll() });
 };
 
-function findOne(req:Request, res:Response) {
+async function findOne(req:Request, res:Response) {
   const id= req.params.idVeterinaria
-  const veterinaria= repositoryV.findOne({id})
+  const veterinaria= await repositoryV.findOne({id})
   if (!veterinaria) {
      return res.status(404).send({ message: 'veterinaria not found' });
   }
@@ -40,7 +40,7 @@ function findOne(req:Request, res:Response) {
   }
 
 
-  function add(req:Request, res:Response)  {
+ async  function add(req:Request, res:Response)  {
   const input = req.body.sanitizedInput;
 
   const newVeterinaria = new Veterinaria(
@@ -53,16 +53,16 @@ function findOne(req:Request, res:Response) {
     
   );
 
-  const veterinaria= repositoryV.add(newVeterinaria)
+  const veterinaria= await repositoryV.add(newVeterinaria)
    return res.status(201).json({ message: 'veterinaria created', data: newVeterinaria });
 };
 
 
 
 
-function update(req:Request, res:Response) {
+async function update(req:Request, res:Response) {
   req.body.sanitizedInput.idVeterinaria=req.params.idVeterinaria
-  const veterinaria=repositoryV.update(req.body.sanitizedInput)
+  const veterinaria=await repositoryV.update(req.body.sanitizedInput)
 
   if (!veterinaria) {
     res.status(404).send({ message: 'Veterinaria not found' });
@@ -73,9 +73,9 @@ function update(req:Request, res:Response) {
 
 
 
-function remove(req:Request, res:Response)  {
+async function remove(req:Request, res:Response)  {
   const id= req.params.idVeterinaria
-  const veterinaria= repositoryV.delete({id})
+  const veterinaria= await repositoryV.delete({id})
   
   if (!Veterinaria) {
     res.status(404).send({ message: 'veterinaria not found' });

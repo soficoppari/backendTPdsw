@@ -1,7 +1,8 @@
+import { dbV } from "../shared/bd/conn.js";
 import { Repository } from "../shared/repository.js";
 import { Veterinaria } from "./veterinaria.entity.js";
 
-const veterinarias = [
+const veterinariasArray = [
   new Veterinaria(
     'tg56-trg4-t4hg-3rde-papa',
     '34121',
@@ -12,23 +13,25 @@ const veterinarias = [
   )
 ]
 
+const veterinarias=dbV.collection<Veterinaria>("LasVeterinarias")
+
 export class VeterinariaRepository implements Repository<Veterinaria>{
-    public findAll(): Veterinaria[] | undefined {
-        return veterinarias
+    public async findAll(): Promise<Veterinaria[] | undefined> {
+        return await veterinarias.find().toArray()
     }
 
-    public findOne(item: { id: string; }): Veterinaria | undefined {
-        return veterinarias.find((veterinaria) => veterinaria.idVeterinaria === item.id)
+    public async findOne(item: { id: string; }): Promise<Veterinaria | undefined> {
+        return await veterinarias.find((veterinaria) => veterinaria.idVeterinaria === item.id)
     }
 
-    public add(item: Veterinaria): Veterinaria | undefined {
-        veterinarias.push(item)
+    public async add(item: Veterinaria): Promise<Veterinaria | undefined> {
+        await veterinarias.push(item)
         return item
     }
 
 
-public update(item: Veterinaria): Veterinaria | undefined {
-    const veterinariaIdx = veterinarias.findIndex((veterinaria) => veterinaria.idVeterinaria === item.idVeterinaria)
+public async update(item: Veterinaria): Promise<Veterinaria | undefined> {
+    const veterinariaIdx = await veterinarias.findIndex((veterinaria) => veterinaria.idVeterinaria === item.idVeterinaria)
 
     if (veterinariaIdx !== -1) {
       veterinarias[veterinariaIdx] = { ...veterinarias[veterinariaIdx], ...item }
@@ -36,8 +39,8 @@ public update(item: Veterinaria): Veterinaria | undefined {
     return veterinarias[veterinariaIdx]
   }
 
-public delete(item: { id: string; }): Veterinaria | undefined {
-    const veterinariaIdx = veterinarias.findIndex((veterinaria) => veterinaria.idVeterinaria === item.id);
+public async delete(item: { id: string; }): Promise<Veterinaria | undefined> {
+    const veterinariaIdx = await veterinarias.findIndex((veterinaria) => veterinaria.idVeterinaria === item.id);
 
     if (veterinariaIdx !== -1) {
         const deletedVeterinaria = veterinarias[veterinariaIdx];
