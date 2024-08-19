@@ -5,7 +5,7 @@ const horarios =[
   new Horario(
     new Date("2024-08-09T10:00:00"),
     new Date("2024-08-09T11:00:00"),
-    
+   
   ),
 ]
 

@@ -1,17 +1,10 @@
 import { Repository } from '../shared/repository.js'
 import { Antecedente } from './antecedente.entity.js'
-
 import {dbA} from '../shared/bd/conn.js'
 import { ObjectId } from 'mongodb'
 
 
 const antecedentesArray = [
-  new Antecedente(
-  'deschistoria',
-  new Date("2024-09-12T10:00:00"),
-  'nombremotivo',
-  1
-  ),
 ]
 
 const antecedentes =dbA.collection<Antecedente>('LosAntecedentes')
@@ -21,25 +14,24 @@ export class AntecedenteRepository implements Repository<Antecedente> {
     return await antecedentes.find().toArray()
   }
 
-  public async findOne(item: { id: string }): Promise<Antecedente | undefined> {
-    const _id = new ObjectId(item.id)
+  public async findOne(inst: { id: string }): Promise<Antecedente | undefined> {
+    const _id = new ObjectId(inst.id)
     return (await antecedentes.findOne({ _id })) || undefined
     //return await antecedentes.find((antecedente) => antecedente.id.toString() === item.id
   }
 
-  public async add(item: Antecedente): Promise<Antecedente | undefined> {
-    item._id = (await antecedentes.insertOne(item)).insertedId
-    return item
+  public async add(inst: Antecedente): Promise<Antecedente | undefined> {
+    inst._id = (await antecedentes.insertOne(inst)).insertedId
+    return inst
   }
 
-  public async update(item: Antecedente): Promise<Antecedente | undefined> {
-    const {id, ...antecedenteInput}=item
+  public async update(id:string,inst: Antecedente): Promise<Antecedente | undefined> {
     const _id = new ObjectId(id)
-    return (await antecedentes.findOneAndUpdate({ _id }, { $set: antecedenteInput }, { returnDocument: 'after' })) || undefined
+    return (await antecedentes.findOneAndUpdate({ _id }, { $set:inst}, { returnDocument: 'after' })) || undefined
   }
 
-  public async delete(item: { id: string }): Promise<Antecedente | undefined> {
-    const _id = new ObjectId(item.id)
+  public async delete(inst: { id: string }): Promise<Antecedente | undefined> {
+    const _id = new ObjectId(inst.id)
     return (await antecedentes.findOneAndDelete({ _id })) || undefined
   }
 }

@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { dbU } from "../shared/bd/conn.js";
 import { Repository } from "../shared/repository.js";
 import { Usuario } from "./usuario.entity.js";
@@ -8,46 +9,35 @@ import { Usuario } from "./usuario.entity.js";
 // const mascotas: Mascota[]=[newmasc]
 
 const usuarioArray = [
-  new Usuario(
-    'tg56-trg4-t4hg-3rde-uj6t',
-    'santino',
-    'chibotta',
-    'santichibotta@gmail.com',
-    341,
-    '341',
-    //mascotas
-    ['loro','perro']
-  )
 ]
 
 
-const usuario= dbU.collection<Usuario>("LosUsuarios")
+const usuario= dbU.collection<Usuario>('LosUsuarios')
 
 export class UsuarioRepository implements Repository<Usuario>{
   public async findAll(): Promise<Usuario[] | undefined> {
     return await usuario.find().toArray()
   }
+
+
 public async findOne(inst: { id: string; }): Promise<Usuario | undefined> {
- return await usuario.find((c) => c.idUsuario === inst.id)
+ const _id = new ObjectId(inst.id);
+ return (await usuario.findOne({_id}))||undefined
 }
+
 public async add(inst: Usuario): Promise<Usuario | undefined> {
-  await usuario.push(inst)
+  inst._id=(await usuario.insertOne(inst)).insertedId
   return inst
 }
-public async update(inst: Usuario): Promise<Usuario | undefined> {
-  const indexC = await usuario.findIndex((c) => c.idUsuario === inst.idUsuario);
-  
-  if (indexC !== -1) {
-    usuario[indexC] = { ...usuario[indexC], ...inst }
-  }
-  return usuario[indexC]
- }
-public async delete(inst: { id: string; }): Promise<Usuario | undefined> {
-  const indexC = await usuario.findIndex((c) => c.idUsuario === inst.id);
 
-  if (indexC !== -1) {
-    const deletedUsuarios = usuario[indexC]
-    usuario.splice(indexC, 1)
-    return deletedUsuarios
-  }}
+public async update(id:string,inst: Usuario): Promise<Usuario | undefined> {
+  const _id = new ObjectId(id)
+  return (await usuario.findOneAndUpdate({_id}, {$set:inst}, 
+  {returnDocument: 'after'})) || undefined
+ }
+
+public async delete(inst: { id: string; }): Promise<Usuario | undefined> {
+  const _id = new ObjectId(inst.id)
+  return (await usuario.findOneAndDelete({_id})) || undefined
+}
 }

@@ -26,13 +26,13 @@ function sanitizeVeterinariaInput(req: Request, res: Response, next: NextFunctio
   next();
 }
 
-async function findAll(req:Request, res:Response) {
-  res.json({ data: await repositoryV.findAll() });
+function findAll(req:Request, res:Response) {
+  res.json({ data: repositoryV.findAll() });
 };
 
-async function findOne(req:Request, res:Response) {
+function findOne(req:Request, res:Response) {
   const id= req.params.idVeterinaria
-  const veterinaria= await repositoryV.findOne({id})
+  const veterinaria= repositoryV.findOne({id})
   if (!veterinaria) {
      return res.status(404).send({ message: 'veterinaria not found' });
   }
@@ -40,7 +40,7 @@ async function findOne(req:Request, res:Response) {
   }
 
 
- async  function add(req:Request, res:Response)  {
+  function add(req:Request, res:Response)  {
   const input = req.body.sanitizedInput;
 
   const newVeterinaria = new Veterinaria(
@@ -53,16 +53,15 @@ async function findOne(req:Request, res:Response) {
     
   );
 
-  const veterinaria= await repositoryV.add(newVeterinaria)
+  const veterinaria= repositoryV.add(newVeterinaria)
    return res.status(201).json({ message: 'veterinaria created', data: newVeterinaria });
 };
 
 
 
 
-async function update(req:Request, res:Response) {
-  req.body.sanitizedInput.idVeterinaria=req.params.idVeterinaria
-  const veterinaria=await repositoryV.update(req.body.sanitizedInput)
+function update(req:Request, res:Response) {
+  const veterinaria=repositoryV.update(req.params.idVeterinaria,req.body.sanitizedInput)
 
   if (!veterinaria) {
     res.status(404).send({ message: 'Veterinaria not found' });
@@ -73,9 +72,9 @@ async function update(req:Request, res:Response) {
 
 
 
-async function remove(req:Request, res:Response)  {
+function remove(req:Request, res:Response)  {
   const id= req.params.idVeterinaria
-  const veterinaria= await repositoryV.delete({id})
+  const veterinaria= repositoryV.delete({id})
   
   if (!Veterinaria) {
     res.status(404).send({ message: 'veterinaria not found' });

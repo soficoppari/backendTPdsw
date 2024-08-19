@@ -7,7 +7,7 @@ const repositoryU= new UsuarioRepository()
 
 function sanitizeUsuarioInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
-    idUsuario: req.body.idUsuario,
+    idUsuario: req.body.id,
     nombre: req.body.nombre,
     apellido: req.body.apellido,
     email: req.body.email,
@@ -31,7 +31,7 @@ async function findAll(req:Request, res:Response) {
 };
 
 async function findOne(req:Request, res:Response) {
-  const id= req.params.idUsuario
+  const id= req.params.id
   const usuario= await repositoryU.findOne({id})
   if (!usuario) {
      return res.status(404).send({ message: 'usuario not found' });
@@ -44,13 +44,14 @@ async function findOne(req:Request, res:Response) {
   const input = req.body.sanitizedInput;
 
   const newUsuario = new Usuario(
-    input.idUsuario,
+    input._id,
+    input.id,
     input.nombre,
     input.apellido,
     input.email,
     input.nroTelefono,
     input.contraseniaUser,
-    input.mascotas
+    //input.mascotas
   );
 
     const usuario= await repositoryU.add(newUsuario)
@@ -59,8 +60,7 @@ async function findOne(req:Request, res:Response) {
 
 
 async function update(req:Request, res:Response) {
-  req.body.sanitizedInput.idUsuario=req.params.idUsuario
-  const usuario=await repositoryU.update(req.body.sanitizedInput)
+  const usuario=await repositoryU.update(req.params.id, req.body.sanitizedInput)
 
   if (!usuario) {
     res.status(404).send({ message: 'Usuario not found' });
@@ -72,7 +72,7 @@ async function update(req:Request, res:Response) {
 
 
 async function remove(req:Request, res:Response)  {
-  const id= req.params.idUsuario
+  const id= req.params.id
   const usuario= await repositoryU.delete({id})
   
   if (!usuario) {

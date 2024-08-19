@@ -1,52 +1,37 @@
-import { dbV } from "../shared/bd/conn.js";
 import { Repository } from "../shared/repository.js";
 import { Veterinaria } from "./veterinaria.entity.js";
-
-const veterinariasArray = [
-  new Veterinaria(
-    'tg56-trg4-t4hg-3rde-papa',
-    '34121',
-    'VetMax',
-    'rioja 123',
-    3413685420,
-    'vetmax@gmail.com'
-  )
+import { ObjectId } from "mongodb";
+import { dbV } from "../shared/bd/conn.js";
+import { mascota } from "../MascotasBag/mascota.repository.js";
+const veterinariasarray = [
 ]
 
-const veterinarias=dbV.collection<Veterinaria>("LasVeterinarias")
+const veterinaria = dbV.collection<Veterinaria>('LasVeterinarias')
 
 export class VeterinariaRepository implements Repository<Veterinaria>{
-    public async findAll(): Promise<Veterinaria[] | undefined> {
-        return await veterinarias.find().toArray()
-    }
-
-    public async findOne(item: { id: string; }): Promise<Veterinaria | undefined> {
-        return await veterinarias.find((veterinaria) => veterinaria.idVeterinaria === item.id)
-    }
-
-    public async add(item: Veterinaria): Promise<Veterinaria | undefined> {
-        await veterinarias.push(item)
-        return item
-    }
-
-
-public async update(item: Veterinaria): Promise<Veterinaria | undefined> {
-    const veterinariaIdx = await veterinarias.findIndex((veterinaria) => veterinaria.idVeterinaria === item.idVeterinaria)
-
-    if (veterinariaIdx !== -1) {
-      veterinarias[veterinariaIdx] = { ...veterinarias[veterinariaIdx], ...item }
-    }
-    return veterinarias[veterinariaIdx]
+  public async findAll(): Promise<Veterinaria[] | undefined> {
+      return await veterinaria.find().toArray()
   }
 
-public async delete(item: { id: string; }): Promise<Veterinaria | undefined> {
-    const veterinariaIdx = await veterinarias.findIndex((veterinaria) => veterinaria.idVeterinaria === item.id);
+  public async findOne(inst: { id: string; }): Promise<Veterinaria | undefined> {
+    const _id = new ObjectId(inst.id);
+    return (await veterinaria.findOne({_id}))||undefined
+  }
 
-    if (veterinariaIdx !== -1) {
-        const deletedVeterinaria = veterinarias[veterinariaIdx];
-        veterinarias.splice(veterinariaIdx, 1);
-        return deletedVeterinaria;
-    }
-}
+  public async add(inst: Veterinaria): Promise<Veterinaria | undefined> {
+    inst._id = (await veterinaria.insertOne(inst)).insertedId
+    return inst
+  }
+
+  public async update(id:string,inst:Veterinaria): Promise<Veterinaria | undefined> {
+    const _id = new ObjectId(id)
+    return (await veterinaria.findOneAndUpdate({_id}, {$set:inst},
+      {returnDocument:'after'}))||undefined
+  }
+
+  public async delete(inst: { id: string; }): Promise<Veterinaria | undefined> {
+      const _id = new ObjectId(inst.id)
+      return (await veterinaria.findOneAndDelete({_id}))||undefined
+  }
 
 }
