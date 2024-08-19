@@ -1,0 +1,46 @@
+GET http://localhost:3000/api/mascota 
+
+#####
+
+GET http://localhost:3000/api/mascota/aaaa-bbbb-masc-ota1-0000
+
+
+####
+
+POST http://localhost:3000/api/mascota/
+Content-Type: application/json
+
+{
+    //"idMascota": "aaaa-bbbb-masc-ota2-0000",
+    "nombre": "ema",
+    "fechaNac": "2017-05-22"
+}   
+
+
+
+####
+PUT http://localhost:3000/api/mascota/aaaa-bbbb-masc-ota1-0000
+Content-Type: application/json
+
+{
+
+    //"idMascota": "aaaa-bbbb-masc-ota2-0000",
+    "nombre": "emuchi", 
+    "fechaNac": "2017/05/22"
+
+}
+
+####
+
+
+PATCH http://localhost:3000/api/mascota/aaaa-bbbb-masc-ota1-0000
+Content-Type: application/json
+
+{
+    "nombre": "jack"
+
+}
+
+####
+
+DELETE http://localhost:3000/api/mascota/aaaa-bbbb-masc-ota1-0000
