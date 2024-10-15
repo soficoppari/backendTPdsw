@@ -3,8 +3,8 @@ import { sanitizeUsuarioInput, findAll, findOne, add, update, remove } from "./u
 
 export const usuarioRouter= Router()
 usuarioRouter.get('/', findAll)
-usuarioRouter.get('/:idUsuario', findOne)
+usuarioRouter.get('/:id', findOne)
 usuarioRouter.post('/',sanitizeUsuarioInput, add)
-usuarioRouter.put('/:idUsuario',sanitizeUsuarioInput, update)
-usuarioRouter.patch('/:idUsuario',sanitizeUsuarioInput, update)
-usuarioRouter.delete('/:idUsuario',sanitizeUsuarioInput, remove)
+usuarioRouter.put('/:id',sanitizeUsuarioInput, update)
+usuarioRouter.delete('/:id',sanitizeUsuarioInput, remove)
+

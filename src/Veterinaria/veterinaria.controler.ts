@@ -1,19 +1,21 @@
-import { Request,Response,NextFunction } from "express";
-import { VeterinariaRepository } from "./veterinaria.repository.js";
-import { Veterinaria } from "./veterinaria.entity.js";
+import { Request, Response, NextFunction } from 'express';
+import { Veterinaria } from './veterinaria.entity.js';
+import { ORM } from '../shared/db/orm.js';
 
-const repositoryV= new VeterinariaRepository()
+const em = ORM.em;
 
-
-function sanitizeVeterinariaInput(req: Request, res: Response, next: NextFunction) {
+function sanitizeVeterinariaInput(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   req.body.sanitizedInput = {
-    idVeterinaria: req.body.idVeterinaria,
+    id: req.body.id,
     contraseniaVet: req.body.contraseniaVet,
     nombreVet: req.body.nombreVet,
     direccion: req.body.direccion,
     nroTelefono: req.body.nroTelefono,
     email: req.body.email,
-    
   };
 
   // Eliminar propiedades indefinidas
@@ -26,61 +28,59 @@ function sanitizeVeterinariaInput(req: Request, res: Response, next: NextFunctio
   next();
 }
 
-function findAll(req:Request, res:Response) {
-  res.json({ data: repositoryV.findAll() });
-};
-
-function findOne(req:Request, res:Response) {
-  const id= req.params.idVeterinaria
-  const veterinaria= repositoryV.findOne({id})
-  if (!veterinaria) {
-     return res.status(404).send({ message: 'veterinaria not found' });
+async function findAll(req: Request, res: Response) {
+  try {
+    const veterinarias = await em.find(Veterinaria, {});
+    res
+      .status(200)
+      .json({ message: 'found all veterinarias', data: veterinarias });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
-    res.json({ data: veterinaria });
-  }
-
-
-  function add(req:Request, res:Response)  {
-  const input = req.body.sanitizedInput;
-
-  const newVeterinaria = new Veterinaria(
-    input.idVeterinaria,
-    input.contraseniaVet,
-    input.nombreVet,
-    input.direccion,
-    input.nroTelefono,
-    input.email,
-    
-  );
-
-  const veterinaria= repositoryV.add(newVeterinaria)
-   return res.status(201).json({ message: 'veterinaria created', data: newVeterinaria });
-};
-
-
-
-
-function update(req:Request, res:Response) {
-  req.body.sanitizedInput.idVeterinaria=req.params.idVeterinaria
-  const veterinaria=repositoryV.update(req.body.sanitizedInput)
-
-  if (!veterinaria) {
-    res.status(404).send({ message: 'Veterinaria not found' });
-  }
-  
-  return res.status(200).json({ message: 'Veterinaria updated', data: veterinaria});
 }
 
-
-
-function remove(req:Request, res:Response)  {
-  const id= req.params.idVeterinaria
-  const veterinaria= repositoryV.delete({id})
-  
-  if (!Veterinaria) {
-    res.status(404).send({ message: 'veterinaria not found' });
+async function findOne(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id);
+    const veterinaria = await em.findOneOrFail(Veterinaria, { id });
+    res.status(200).json({ message: 'found veterinaria', data: veterinaria });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
-  res.status(200).json({ message: 'Veterinaria deleted' });
-};
+}
 
-export {sanitizeVeterinariaInput, findAll, findOne, add, update, remove}
+async function add(req: Request, res: Response) {
+  try {
+    const veterinaria = em.create(Veterinaria, req.body.sanitizedInput);
+    await em.flush();
+    res.status(201).json({ message: 'veterinaria created', data: veterinaria });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function update(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id);
+    const veterinariaToUpdate = await em.findOneOrFail(Veterinaria, { id });
+    em.assign(veterinariaToUpdate, req.body.sanitizedInput);
+    await em.flush();
+    res
+      .status(200)
+      .json({ message: 'veterinaria updated', data: veterinariaToUpdate });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function remove(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id);
+    const veterinaria = em.getReference(Veterinaria, id);
+    await em.removeAndFlush(veterinaria);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export { sanitizeVeterinariaInput, findAll, findOne, add, update, remove };

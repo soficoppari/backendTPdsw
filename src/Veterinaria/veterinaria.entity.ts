@@ -1,12 +1,23 @@
-import crypto from 'node:crypto'
+import {Entity,Property,ManyToMany,Cascade,ManyToOne, PrimaryKey,} from '@mikro-orm/core'
 
+
+@Entity()
 export class Veterinaria{
-  constructor(
-    public idVeterinaria=crypto.randomUUID(),
-    public contraseniaVet:string,
-    public nombreVet:string,
-    public direccion:string,
-    public nroTelefono:number,
-    public email:string,
-        ){}
+  @PrimaryKey({nullable: false})
+  id!: number
+
+  @Property({ nullable: false })
+  contraseniaVet!: string
+
+  @Property({ nullable: false })
+  nombreVet!:string
+
+  @Property({ nullable: false })
+  direccion!:string
+
+  @Property({ nullable: false })
+  nroTelefono!:number
+
+  @Property({ nullable: false })
+  email!:string
 }

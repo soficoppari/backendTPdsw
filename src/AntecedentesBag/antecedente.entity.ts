@@ -1,18 +1,16 @@
+import { Cascade, Collection, Entity, ManyToMany, OneToMany, PrimaryKey, Property, } from '@mikro-orm/core'
 
-class IdGenerator {
-  private static currentId: number = 0;
-
-  static getNextId(): number {
-    return ++IdGenerator.currentId;
-  }
-}
-
+@Entity()
 export class Antecedente {
-  constructor(
-    public descripcion: string,
-    public fecha: Date,
-    public nombreMotivo: string,
-    public id=(IdGenerator.getNextId()),
-  ) {}
-}
+  @PrimaryKey()
+  id!:number
 
+  @Property()
+  descripcion!:string
+
+  @Property()
+  fecha!:Date
+
+  @Property()
+  nombreMotivo!:string
+}

@@ -1,13 +1,12 @@
-import { Request,Response,NextFunction } from "express";
-import { UsuarioRepository } from "./usuario.repository.js";
-import { Usuario } from "./usuario.entity.js";
+import { Request, Response, NextFunction } from 'express';
+import { ORM } from '../shared/db/orm.js';
+import { Usuario } from './usuario.entity.js';
 
-const repositoryU= new UsuarioRepository()
-
+const em = ORM.em;
 
 function sanitizeUsuarioInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
-    idUsuario: req.body.idUsuario,
+    id: req.body.id,
     nombre: req.body.nombre,
     apellido: req.body.apellido,
     email: req.body.email,
@@ -26,59 +25,55 @@ function sanitizeUsuarioInput(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-function findAll(req:Request, res:Response) {
-  res.json({ data: repositoryU.findAll() });
-};
-
-function findOne(req:Request, res:Response) {
-  const id= req.params.idUsuario
-  const usuario= repositoryU.findOne({id})
-  if (!usuario) {
-     return res.status(404).send({ message: 'usuario not found' });
+async function findAll(req: Request, res: Response) {
+  try {
+    const usuarios = await em.find(Usuario, {});
+    res.status(200).json({ message: 'found all usuarios', data: usuarios });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
-    res.json({ data: usuario });
-  }
-
-
-  function add(req:Request, res:Response)  {
-  const input = req.body.sanitizedInput;
-
-  const newUsuario = new Usuario(
-    input.idUsuario,
-    input.nombre,
-    input.apellido,
-    input.email,
-    input.nroTelefono,
-    input.contraseniaUser,
-    input.mascotas
-  );
-
-    const usuario= repositoryU.add(newUsuario)
-   return res.status(201).json({ message: 'usuario created', data: newUsuario });
-};
-
-
-function update(req:Request, res:Response) {
-  req.body.sanitizedInput.idUsuario=req.params.idUsuario
-  const usuario=repositoryU.update(req.body.sanitizedInput)
-
-  if (!usuario) {
-    res.status(404).send({ message: 'Usuario not found' });
-  }
-  
-  return res.status(200).json({ message: 'Usuario updated', data: usuario});
 }
 
-
-
-function remove(req:Request, res:Response)  {
-  const id= req.params.idUsuario
-  const usuario= repositoryU.delete({id})
-  
-  if (!usuario) {
-    res.status(404).send({ message: 'usuario not found' });
+async function findOne(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id);
+    const usuario = await em.findOneOrFail(Usuario, { id });
+    res.status(200).json({ message: 'found usuario', data: usuario });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
-  res.status(200).json({ message: 'usuario deleted' });
-};
+}
 
-export {sanitizeUsuarioInput, findAll, findOne, add, update, remove}
+async function add(req: Request, res: Response) {
+  try {
+    const usuario = em.create(Usuario, req.body.sanitizedInput);
+    await em.flush();
+    res.status(201).json({ message: 'usuario created', data: usuario });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function update(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id);
+    const usuarioToUpdate = await em.findOneOrFail(Usuario, { id });
+    em.assign(usuarioToUpdate, req.body.sanitizedInput);
+    await em.flush();
+    res.status(200).json({ message: 'usuario updated', data: usuarioToUpdate });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function remove(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id);
+    const usuario = em.getReference(Usuario, id);
+    await em.removeAndFlush(usuario);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export { sanitizeUsuarioInput, findAll, findOne, add, update, remove };

@@ -1,73 +1,83 @@
-import { Request, Response, NextFunction } from 'express'
-import { AntecedenteRepository } from './antecedente.repository.js'
-import { Antecedente } from './antecedente.entity.js'
+import { Request, Response, NextFunction } from 'express';
+import { Antecedente } from './antecedente.entity.js';
+import { ORM } from '../shared/db/orm.js';
 
-const repository = new AntecedenteRepository()
+const em = ORM.em;
 
-function sanitizeAntecedenteInput(req: Request, res: Response, next: NextFunction) {
+function sanitizeAntecedenteInput(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   req.body.sanitizedInput = {
+    id: req.body.id,
     descripcion: req.body.descripcion,
     fecha: req.body.fecha,
     nombreMotivo: req.body.nombreMotivo,
-    id: req.body.id
-  }
-  //more checks here
+  };
 
   Object.keys(req.body.sanitizedInput).forEach((key) => {
     if (req.body.sanitizedInput[key] === undefined) {
-      delete req.body.sanitizedInput[key]
+      delete req.body.sanitizedInput[key];
     }
-  })
-  next()
+  });
+
+  next();
 }
 
-function findAll(req: Request, res: Response) {
-  res.json({ data: repository.findAll() })
-}
-
-function findOne(req: Request, res: Response) {
-  const id = req.params.id
-  const antecedente = repository.findOne({ id })
-  if (!antecedente) {
-    return res.status(404).send({ message: 'Antecedente not found' })
-  }
-  res.json({ data: antecedente })
-}
-
-function add(req: Request, res: Response) {
-  const input = req.body.sanitizedInput
-
-  const antecedenteInput = new Antecedente(
-    input.descripcion,
-    input.fecha,
-    input.nombreMotivo,
-    input.id
-  )
-
-  const antecedente = repository.add(antecedenteInput)
-  return res.status(201).send({ message: 'Antecedente created', data: antecedente })
-}
-
-function update(req: Request, res: Response) {
-  req.body.sanitizedInput.id = req.params.id
-  const antecedente = repository.update(req.body.sanitizedInput)
-
-  if (!antecedente) {
-    return res.status(404).send({ message: 'Antecedente not found' })
-  }
-
-  return res.status(200).send({ message: 'Antecedente updated successfully', data: antecedente })
-}
-
-function remove(req: Request, res: Response) {
-  const id = req.params.id
-  const antecedente = repository.delete({ id })
-
-  if (!antecedente) {
-    res.status(404).send({ message: 'Antecedente not found' })
-  } else {
-    res.status(200).send({ message: 'Antecedente deleted successfully' })
+async function findAll(req: Request, res: Response) {
+  try {
+    const antecedentes = await em.find(Antecedente, {});
+    res
+      .status(200)
+      .json({ message: 'found all antecedentes', data: antecedentes });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 }
 
-export { sanitizeAntecedenteInput, findAll, findOne, add, update, remove }
+async function findOne(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id);
+    const antecedente = await em.findOneOrFail(Antecedente, { id });
+    res.status(200).json({ message: 'found antecedente', data: antecedente });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function add(req: Request, res: Response) {
+  try {
+    const antecedente = em.create(Antecedente, req.body.sanitizedInput);
+    await em.flush();
+    res.status(201).json({ message: 'antecedente created', data: antecedente });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function update(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id);
+    const antecedenteToUpdate = await em.findOneOrFail(Antecedente, { id });
+    em.assign(antecedenteToUpdate, req.body.sanitizedInput);
+    await em.flush();
+    res
+      .status(200)
+      .json({ message: 'antecedente updated', data: antecedenteToUpdate });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function remove(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id);
+    const antecedente = em.getReference(Antecedente, id);
+    await em.removeAndFlush(antecedente);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export { sanitizeAntecedenteInput, findAll, findOne, add, update, remove };
