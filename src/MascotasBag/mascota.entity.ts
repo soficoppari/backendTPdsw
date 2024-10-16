@@ -1,10 +1,23 @@
-import crypto from 'node:crypto'
+import {
+  Collection,
+  Entity,
+  ManyToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+//import { Usuario } from '../UsuarioBag/usuario.entity';
 
-export class Mascota{
-  constructor(
-    public idMascota=crypto.randomUUID(),
-    public nombre:string,
-    public fechaNac: string //o date no se
-    //puede faltar el tipo
-        ){}
+@Entity()
+export class Mascota {
+  @PrimaryKey()
+  id!: number;
+
+  @Property()
+  nombre!: string;
+
+  @Property()
+  fechaNacimiento!: string;
+
+  //@ManyToMany(() => Usuario, (usuario) => usuario.mascotas)
+  //usuarios = new Collection<Usuario>(this);
 }

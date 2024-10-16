@@ -1,15 +1,36 @@
-import crypto from 'node:crypto'
-import { Mascota } from '../MascotasBag/mascota.entity.js';
+import {
+  Cascade,
+  Collection,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
 
-export class Usuario{
-  constructor(
-    public idUsuario=crypto.randomUUID(),
-    public nombre:string,
-    public apellido:string,
-    public email:string,
-    public nroTelefono:number,
-    public contraseniaUser:string,
-    public mascotas:string[]
-    // public mascotas:Mascota[]
-        ){}
+@Entity()
+export class Usuario {
+  @PrimaryKey()
+  id!: number;
+
+  @Property()
+  nombre!: string;
+
+  @Property()
+  apellido!: string;
+
+  @Property()
+  email!: string;
+
+  @Property()
+  nroTelefono!: number;
+
+  @Property()
+  contraseniaUser!: string;
+
+  //@ManyToMany(() => Mascota, (mascota) => mascota.usuarios, {
+  //cascade: [Cascade.ALL],
+  //owner: true,
+  //})
+  //mascotas!: Mascota[];
 }
