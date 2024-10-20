@@ -11,13 +11,12 @@ POST http://localhost:3000/api/usuario/
 Content-Type: application/json
 
 {
-   "idUsuario": "tg59-trg4-t4hg-3rde-uj4t",
+    "id": 111,
     "nombre": "ramiro",
     "apellido": "garcia",
     "email": "ramirogarcia@gmail.com",
     "nroTelefono":111,
     "contraseniaUser": "111",
-    "mascotas": ["gato","perra"]
 }
 
 ####

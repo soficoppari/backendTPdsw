@@ -1,18 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import { ORM } from '../shared/db/orm.js';
-import { Usuario } from './usuario.entity.js';
+import { Tipo } from './tipo.entity.js';
 
 const em = ORM.em;
 
-function sanitizeUsuarioInput(req: Request, res: Response, next: NextFunction) {
+function sanitizeTipoInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     id: req.body.id,
     nombre: req.body.nombre,
-    apellido: req.body.apellido,
-    email: req.body.email,
-    nroTelefono: req.body.nroTelefono,
-    contraseniaUser: req.body.contraseniaUser,
-    mascotas: req.body.mascotas,
+    descripcion: req.body.descripcion,
   };
 
   // Eliminar propiedades indefinidas
@@ -27,8 +23,8 @@ function sanitizeUsuarioInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
-    const usuarios = await em.find(Usuario, {});
-    res.status(200).json({ message: 'found all usuarios', data: usuarios });
+    const tipos = await em.find(Tipo, {});
+    res.status(200).json({ message: 'found all tipos', data: tipos });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -37,8 +33,8 @@ async function findAll(req: Request, res: Response) {
 async function findOne(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id);
-    const usuario = await em.findOneOrFail(Usuario, { id });
-    res.status(200).json({ message: 'found usuario', data: usuario });
+    const tipo = await em.findOneOrFail(Tipo, { id });
+    res.status(200).json({ message: 'found tipo', data: tipo });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -46,9 +42,9 @@ async function findOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
-    const usuario = em.create(Usuario, req.body.sanitizedInput);
+    const tipo = em.create(Tipo, req.body.sanitizedInput);
     await em.flush();
-    res.status(201).json({ message: 'usuario created', data: usuario });
+    res.status(201).json({ message: 'tipo created', data: tipo });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -57,10 +53,10 @@ async function add(req: Request, res: Response) {
 async function update(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id);
-    const usuarioToUpdate = await em.findOneOrFail(Usuario, { id });
-    em.assign(usuarioToUpdate, req.body.sanitizedInput);
+    const tipoToUpdate = await em.findOneOrFail(Tipo, { id });
+    em.assign(tipoToUpdate, req.body.sanitizedInput);
     await em.flush();
-    res.status(200).json({ message: 'usuario updated', data: usuarioToUpdate });
+    res.status(200).json({ message: 'tipo updated', data: tipoToUpdate });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -69,11 +65,12 @@ async function update(req: Request, res: Response) {
 async function remove(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id);
-    const usuario = em.getReference(Usuario, id);
-    await em.removeAndFlush(usuario);
+    const tipo = em.getReference(Tipo, id);
+    await em.removeAndFlush(tipo);
+    res.status(200).json({ message: 'tipo deleted' });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
 }
 
-export { sanitizeUsuarioInput, findAll, findOne, add, update, remove };
+export { sanitizeTipoInput, findAll, findOne, add, update, remove };

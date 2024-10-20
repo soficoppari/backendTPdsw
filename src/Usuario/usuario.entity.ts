@@ -7,6 +7,7 @@ import {
   PrimaryKey,
   Property,
 } from '@mikro-orm/core';
+import { Mascota } from '../Mascota/mascota.entity';
 
 @Entity()
 export class Usuario {
@@ -28,9 +29,6 @@ export class Usuario {
   @Property()
   contraseniaUser!: string;
 
-  //@ManyToMany(() => Mascota, (mascota) => mascota.usuarios, {
-  //cascade: [Cascade.ALL],
-  //owner: true,
-  //})
-  //mascotas!: Mascota[];
+  //@OneToMany(() => Mascota, (mascota) => mascota.usuario)
+  //mascotas = new Collection<Mascota>(this);
 }
