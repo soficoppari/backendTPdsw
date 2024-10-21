@@ -2,12 +2,11 @@ import {
   Cascade,
   Collection,
   Entity,
-  ManyToMany,
   OneToMany,
   PrimaryKey,
   Property,
 } from '@mikro-orm/core';
-import { Mascota } from '../Mascota/mascota.entity';
+import { Mascota } from '../Mascota/mascota.entity.js';
 
 @Entity()
 export class Usuario {
@@ -29,6 +28,8 @@ export class Usuario {
   @Property()
   contraseniaUser!: string;
 
-  //@OneToMany(() => Mascota, (mascota) => mascota.usuario)
-  //mascotas = new Collection<Mascota>(this);
+  @OneToMany(() => Mascota, (mascota) => mascota.usuario, {
+    cascade: [Cascade.ALL],
+  })
+  mascotas = new Collection<Mascota>(this);
 }

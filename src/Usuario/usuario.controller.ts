@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { ORM } from '../shared/db/orm.js';
 import { Usuario } from './usuario.entity.js';
-//import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const em = ORM.em;
 
@@ -28,7 +29,7 @@ function sanitizeUsuarioInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
-    const usuarios = await em.find(Usuario, {});
+    const usuarios = await em.find(Usuario, {}, { populate: ['mascotas'] }); // Poblar mascotas
     res.status(200).json({ message: 'found all usuarios', data: usuarios });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -38,7 +39,11 @@ async function findAll(req: Request, res: Response) {
 async function findOne(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id);
-    const usuario = await em.findOneOrFail(Usuario, { id });
+    const usuario = await em.findOneOrFail(
+      Usuario,
+      { id },
+      { populate: ['mascotas'] }
+    ); // Poblar mascotas
     res.status(200).json({ message: 'found usuario', data: usuario });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -55,18 +60,56 @@ async function add(req: Request, res: Response) {
       return res.status(400).json({ message: 'Email already in use' });
     }
 
-    // Encriptar la contraseña
-    //const hashedPassword = await bcrypt.hash(
-    //req.body.sanitizedInput.contraseniaUser,
-    // 10
-    //);
-    //req.body.sanitizedInput.contraseniaUser = hashedPassword;
-
+    //Encriptar la contraseña
+    const hashedPassword = await bcrypt.hash(
+      req.body.sanitizedInput.contraseniaUser,
+      10
+    );
+    (req.body.sanitizedInput.contraseniaUser = hashedPassword),
+      (req.body.sanitizedInput.mascotas = []); // Inicializa la colección vacía;
     const usuario = em.create(Usuario, req.body.sanitizedInput);
     await em.flush();
     res.status(201).json({ message: 'Usuario created', data: usuario });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+  }
+}
+
+async function login(req: Request, res: Response) {
+  try {
+    const { email, contraseniaUser } = req.body;
+
+    // Verificar si el usuario existe
+    const usuario = await em.findOne(Usuario, { email });
+    if (!usuario) {
+      return res.status(400).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Comparar contraseñas
+    const validPassword = await bcrypt.compare(
+      contraseniaUser,
+      usuario.contraseniaUser
+    );
+    if (!validPassword) {
+      return res.status(400).json({ message: 'Contraseña incorrecta' });
+    }
+
+    // Crear un token JWT
+    const token = jwt.sign(
+      { id: usuario.id, email: usuario.email, username: usuario.nombre }, // Payload
+      'tu_clave_secreta', // Clave secreta (debes almacenarla de forma segura)
+      { expiresIn: '1h' } // Opciones del token (ej. caduca en 1 hora)
+    );
+
+    // Retornar usuario y token
+    res.status(200).json({
+      message: 'Login exitoso',
+      data: { email: usuario.email, token },
+    }); // Asegúrate de devolver el email correcto
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ message: 'Error interno del servidor', error: error.message });
   }
 }
 
@@ -93,4 +136,4 @@ async function remove(req: Request, res: Response) {
   }
 }
 
-export { sanitizeUsuarioInput, findAll, findOne, add, update, remove };
+export { sanitizeUsuarioInput, findAll, findOne, add, update, remove, login };

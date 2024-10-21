@@ -1,15 +1,8 @@
-import {
-  Entity,
-  Property,
-  ManyToMany,
-  Cascade,
-  ManyToOne,
-  PrimaryKey,
-} from '@mikro-orm/core';
+import { Entity, Property, PrimaryKey } from '@mikro-orm/core';
 
 @Entity()
 export class Veterinaria {
-  @PrimaryKey({ nullable: false })
+  @PrimaryKey()
   id!: number;
 
   @Property({ nullable: false })

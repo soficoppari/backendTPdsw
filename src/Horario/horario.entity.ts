@@ -4,7 +4,6 @@ import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 export class Horario {
   @PrimaryKey()
   id!: number;
-
   @Property()
   fecha_hora_ini!: Date;
 

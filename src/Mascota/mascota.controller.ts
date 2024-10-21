@@ -25,7 +25,7 @@ function sanitizeMascotaInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
-    const mascotas = await em.find(Mascota, {});
+    const mascotas = await em.find(Mascota, {}, { populate: ['usuario'] }); // Poblar usuario
     res.status(200).json({ message: 'found all mascotas', data: mascotas });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -35,7 +35,11 @@ async function findAll(req: Request, res: Response) {
 async function findOne(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id);
-    const mascota = await em.findOneOrFail(Mascota, { id });
+    const mascota = await em.findOneOrFail(
+      Mascota,
+      { id },
+      { populate: ['usuario'] }
+    ); // Poblar usuario
     res.status(200).json({ message: 'found mascota', data: mascota });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -47,9 +51,13 @@ async function add(req: Request, res: Response) {
     const usuario = await em.findOneOrFail(Usuario, {
       id: req.body.sanitizedInput.usuario,
     }); // Encuentra el usuario por ID
-    const mascota = em.create(Mascota, { ...req.body.sanitizedInput, usuario });
+
+    const mascota = em.create(Mascota, {
+      ...req.body.sanitizedInput,
+      usuario, // Asocia la mascota al usuario
+    });
     await em.flush();
-    res.status(201).json({ message: 'mascota created', data: mascota });
+    res.status(201).json({ message: 'Mascota creada', data: mascota });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
