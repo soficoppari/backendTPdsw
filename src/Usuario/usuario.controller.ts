@@ -96,7 +96,7 @@ async function login(req: Request, res: Response) {
 
     // Crear un token JWT
     const token = jwt.sign(
-      { id: usuario.id, email: usuario.email, username: usuario.nombre }, // Payload
+      { id: usuario.id, email: usuario.email }, // Payload
       'tu_clave_secreta', // Clave secreta (debes almacenarla de forma segura)
       { expiresIn: '1h' } // Opciones del token (ej. caduca en 1 hora)
     );
@@ -104,7 +104,11 @@ async function login(req: Request, res: Response) {
     // Retornar usuario y token
     res.status(200).json({
       message: 'Login exitoso',
-      data: { email: usuario.email, token },
+      data: {
+        email: usuario.email,
+        token,
+        usuarioId: usuario.id,
+      },
     }); // Asegúrate de devolver el email correcto
   } catch (error: any) {
     res

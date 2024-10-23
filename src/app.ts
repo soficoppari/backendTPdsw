@@ -12,7 +12,13 @@ import cors from 'cors';
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(
+  cors({
+    origin: 'http://localhost:5173', // Permite el frontend en localhost:3000 (o cualquier otro que uses)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos permitidos
+    allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
+  })
+);
 
 //luego de los middlewares base
 app.use((req, res, next) => RequestContext.create(ORM.em, next));
