@@ -1,4 +1,5 @@
 import {
+  Cascade,
   Entity,
   PrimaryKey,
   Property,
@@ -6,6 +7,7 @@ import {
   Collection,
 } from '@mikro-orm/core';
 import { Especie } from '../Especie/especie.entity';
+import { Mascota } from '../Mascota/mascota.entity.js';
 
 @Entity()
 export class Tipo {
@@ -15,8 +17,10 @@ export class Tipo {
   @Property()
   nombre!: string;
 
-  @Property()
-  descripcion!: string;
+  @OneToMany(() => Mascota, (mascota) => mascota.tipo, {
+    cascade: [Cascade.ALL],
+  })
+  mascotas = new Collection<Mascota>(this);
 
   // Relación de uno a muchos con Especie
   //@OneToMany(() => Especie, (especie) => especie.tipo)
