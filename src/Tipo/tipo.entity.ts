@@ -5,9 +5,11 @@ import {
   Property,
   OneToMany,
   Collection,
+  ManyToMany,
 } from '@mikro-orm/core';
-import { Especie } from '../Especie/especie.entity';
+import { Especie } from '../Especie/especie.entity.js';
 import { Mascota } from '../Mascota/mascota.entity.js';
+import { Veterinaria } from '../Veterinaria/veterinaria.entity.js';
 
 @Entity()
 export class Tipo {
@@ -22,7 +24,8 @@ export class Tipo {
   })
   mascotas = new Collection<Mascota>(this);
 
-  // Relación de uno a muchos con Especie
-  //@OneToMany(() => Especie, (especie) => especie.tipo)
-  //especies = new Collection<Especie>(this); // Usamos Collection para representar la lista de especies
+  @ManyToMany(() => Veterinaria, (veterinaria) => veterinaria.tipos, {
+    cascade: [Cascade.ALL],
+  })
+  veterinarias = new Collection<Veterinaria>(this); // Relación de muchos a muchos con Veterinaria
 }

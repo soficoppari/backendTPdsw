@@ -117,27 +117,4 @@ async function login(req: Request, res: Response) {
   }
 }
 
-async function update(req: Request, res: Response) {
-  try {
-    const id = Number.parseInt(req.params.id);
-    const usuarioToUpdate = await em.findOneOrFail(Usuario, { id });
-    em.assign(usuarioToUpdate, req.body.sanitizedInput);
-    await em.flush();
-    res.status(200).json({ message: 'usuario updated', data: usuarioToUpdate });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-}
-
-async function remove(req: Request, res: Response) {
-  try {
-    const id = Number.parseInt(req.params.id);
-    const usuario = em.getReference(Usuario, id);
-    await em.removeAndFlush(usuario);
-    res.status(200).json({ message: 'usuario deleted' });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-}
-
-export { sanitizeUsuarioInput, findAll, findOne, add, update, remove, login };
+export { sanitizeUsuarioInput, findAll, findOne, add, login };

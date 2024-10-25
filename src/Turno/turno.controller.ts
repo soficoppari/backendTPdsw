@@ -1,15 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import { ORM } from '../shared/db/orm.js';
-import { Horario } from './horario.entity.js';
+import { Turno } from './turno.entity.js';
 
 const em = ORM.em;
 
-function sanitizeHorarioInput(req: Request, res: Response, next: NextFunction) {
+function sanitizeTurnoInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     id: req.body.id,
-    fecha_hora_ini: req.body.horaInicio,
-    fecha_hora_fin: req.body.horaFin,
-    tipoId: req.body.tipoId,
+    horario: req.body.horario,
+    estado: req.body.estado,
+    usuarioId: req.body.usuarioId,
+    mascotaId: req.body.mascotaId,
+    veterinariaId: req.body.veterinariaId,
   };
 
   // Eliminar propiedades indefinidas
@@ -24,8 +26,8 @@ function sanitizeHorarioInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
-    const horarios = await em.find(Horario, {});
-    res.status(200).json({ message: 'found all horarios', data: horarios });
+    const turnos = await em.find(Turno, {});
+    res.status(200).json({ message: 'found all turnos', data: turnos });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -34,8 +36,8 @@ async function findAll(req: Request, res: Response) {
 async function findOne(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id);
-    const horario = await em.findOneOrFail(Horario, { id });
-    res.status(200).json({ message: 'found horario', data: horario });
+    const turno = await em.findOneOrFail(Turno, { id });
+    res.status(200).json({ message: 'found turno', data: turno });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -43,9 +45,9 @@ async function findOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
-    const horario = em.create(Horario, req.body.sanitizedInput);
+    const turno = em.create(Turno, req.body.sanitizedInput);
     await em.flush();
-    res.status(201).json({ message: 'horario created', data: horario });
+    res.status(201).json({ message: 'turno created', data: turno });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -54,10 +56,10 @@ async function add(req: Request, res: Response) {
 async function update(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id);
-    const horarioToUpdate = await em.findOneOrFail(Horario, { id });
-    em.assign(horarioToUpdate, req.body.sanitizedInput);
+    const turnoToUpdate = await em.findOneOrFail(Turno, { id });
+    em.assign(turnoToUpdate, req.body.sanitizedInput);
     await em.flush();
-    res.status(200).json({ message: 'horario updated', data: horarioToUpdate });
+    res.status(200).json({ message: 'horario updated', data: turnoToUpdate });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -66,12 +68,12 @@ async function update(req: Request, res: Response) {
 async function remove(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id);
-    const horario = em.getReference(Horario, id);
-    await em.removeAndFlush(horario);
-    res.status(200).json({ message: 'horario deleted' });
+    const turno = em.getReference(Turno, id);
+    await em.removeAndFlush(turno);
+    res.status(200).json({ message: 'turno deleted' });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
 }
 
-export { sanitizeHorarioInput, findAll, findOne, add, update, remove };
+export { sanitizeTurnoInput, findAll, findOne, add, update, remove };
