@@ -15,6 +15,7 @@ function sanitizeUsuarioInput(req: Request, res: Response, next: NextFunction) {
     nroTelefono: req.body.nroTelefono,
     contraseniaUser: req.body.contraseniaUser,
     mascotas: req.body.mascotas,
+    turnos: req.body.turnos,
   };
 
   // Eliminar propiedades indefinidas
@@ -117,4 +118,26 @@ async function login(req: Request, res: Response) {
   }
 }
 
-export { sanitizeUsuarioInput, findAll, findOne, add, login };
+async function update(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id);
+    const usuarioToUpdate = await em.findOneOrFail(Usuario, { id });
+    em.assign(usuarioToUpdate, req.body.sanitizedInput);
+    await em.flush();
+    res.status(200).json({ message: 'usuario updated', data: usuarioToUpdate });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function remove(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id);
+    const usuario = em.getReference(Usuario, id);
+    await em.removeAndFlush(usuario);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export { sanitizeUsuarioInput, findAll, remove, update, findOne, add, login };

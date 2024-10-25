@@ -7,10 +7,10 @@ export class Horario {
   id!: number;
 
   @Property()
-  fecha_hora_ini!: Date;
+  fechaHoraInicio!: Date;
 
   @Property()
-  fecha_hora_fin!: Date;
+  fechaHoraFin!: Date;
 
   @ManyToOne(() => Veterinaria, { nullable: false })
   veterinaria!: Rel<Veterinaria>;

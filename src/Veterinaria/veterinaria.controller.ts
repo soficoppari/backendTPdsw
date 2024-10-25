@@ -11,11 +11,12 @@ function sanitizeVeterinariaInput(
 ) {
   req.body.sanitizedInput = {
     id: req.body.id,
-    contraseniaVet: req.body.contraseniaVet,
-    nombreVet: req.body.nombreVet,
+    nombre: req.body.nombre,
     direccion: req.body.direccion,
     nroTelefono: req.body.nroTelefono,
-    email: req.body.email,
+    horarios: req.body.horarios,
+    turnos: req.body.turnos,
+    tipos: req.body.tipos,
   };
 
   // Eliminar propiedades indefinidas

@@ -9,7 +9,7 @@ function sanitizeHorarioInput(req: Request, res: Response, next: NextFunction) {
     id: req.body.id,
     fecha_hora_ini: req.body.horaInicio,
     fecha_hora_fin: req.body.horaFin,
-    tipoId: req.body.tipoId,
+    veterinaria: req.body.veterinaria,
   };
 
   // Eliminar propiedades indefinidas

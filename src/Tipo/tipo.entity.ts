@@ -5,9 +5,9 @@ import {
   Property,
   OneToMany,
   Collection,
-  ManyToMany,
+  ManyToOne,
+  Rel,
 } from '@mikro-orm/core';
-import { Especie } from '../Especie/especie.entity.js';
 import { Mascota } from '../Mascota/mascota.entity.js';
 import { Veterinaria } from '../Veterinaria/veterinaria.entity.js';
 
@@ -24,8 +24,6 @@ export class Tipo {
   })
   mascotas = new Collection<Mascota>(this);
 
-  @ManyToMany(() => Veterinaria, (veterinaria) => veterinaria.tipos, {
-    cascade: [Cascade.ALL],
-  })
-  veterinarias = new Collection<Veterinaria>(this); // Relación de muchos a muchos con Veterinaria
+  @ManyToOne(() => Veterinaria, { nullable: false })
+  veterinaria!: Rel<Veterinaria>;
 }

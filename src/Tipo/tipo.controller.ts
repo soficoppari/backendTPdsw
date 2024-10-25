@@ -8,6 +8,8 @@ function sanitizeTipoInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     id: req.body.id,
     nombre: req.body.nombre,
+    mascotas: req.body.mascotas,
+    veterinarias: req.body.veterinarias,
   };
 
   // Eliminar propiedades indefinidas

@@ -7,7 +7,7 @@ const em = ORM.em;
 function sanitizeTurnoInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     id: req.body.id,
-    horario: req.body.horario,
+    horarios: req.body.horarios,
     estado: req.body.estado,
     usuarioId: req.body.usuarioId,
     mascotaId: req.body.mascotaId,

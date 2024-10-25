@@ -5,7 +5,6 @@ import {
   OneToMany,
   Collection,
   Cascade,
-  ManyToMany,
 } from '@mikro-orm/core';
 import { Horario } from '../Horario/horario.entity.js';
 import { Turno } from '../Turno/turno.entity.js';
@@ -17,19 +16,13 @@ export class Veterinaria {
   id!: number;
 
   @Property({ nullable: false })
-  contraseniaVet!: string;
-
-  @Property({ nullable: false })
-  nombreVet!: string;
+  nombre!: string;
 
   @Property({ nullable: false })
   direccion!: string;
 
   @Property({ nullable: false })
   nroTelefono!: number;
-
-  @Property({ nullable: false })
-  email!: string;
 
   @OneToMany(() => Horario, (horario) => horario.veterinaria, {
     cascade: [Cascade.ALL],
@@ -41,8 +34,8 @@ export class Veterinaria {
   })
   turnos = new Collection<Turno>(this);
 
-  @ManyToMany(() => Tipo, (tipo) => tipo.veterinarias, {
+  @OneToMany(() => Tipo, (tipo) => tipo.veterinaria, {
     cascade: [Cascade.ALL],
   })
-  tipos = new Collection<Tipo>(this); // Relación de muchos a muchos con Tipo
+  tipos = new Collection<Tipo>(this);
 }

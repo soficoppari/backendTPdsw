@@ -14,7 +14,7 @@ function sanitizeMascotaInput(req: Request, res: Response, next: NextFunction) {
     fechaNacimiento: req.body.fechaNacimiento,
     usuarioId: req.body.usuarioId,
     tipoId: req.body.tipoId,
-    //tipoId: req.body.tipoId, // Esperamos un id de usuario para la relación
+    turnos: req.body.turnos,
   };
 
   // Eliminar propiedades indefinidas

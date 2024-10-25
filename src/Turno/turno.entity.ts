@@ -28,6 +28,6 @@ export class Turno {
   @ManyToOne(() => Mascota, { nullable: false })
   mascota!: Rel<Mascota>; // Relación directa con Mascota
 
-  @OneToOne(() => Veterinaria, { nullable: false })
+  @ManyToOne(() => Veterinaria, { nullable: false })
   veterinaria!: Rel<Veterinaria>;
 }
