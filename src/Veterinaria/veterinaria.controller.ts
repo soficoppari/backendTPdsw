@@ -31,10 +31,28 @@ function sanitizeVeterinariaInput(
 
 async function findAll(req: Request, res: Response) {
   try {
-    const veterinarias = await em.find(Veterinaria, {});
+    // Convierte tipoMascota a number
+    const tipoMascotaId = Number(req.query.tipoMascota);
+
+    // Verifica que el tipoMascotaId sea un número válido
+    if (isNaN(tipoMascotaId)) {
+      return res
+        .status(400)
+        .json({ message: 'El tipo de mascota debe ser un ID numérico válido' });
+    }
+
+    // Busca veterinarias que contengan este tipo de mascota y carga los tipos asociados
+    const veterinarias = await em.find(
+      Veterinaria,
+      {
+        tipos: { $in: [tipoMascotaId] }, // Busca veterinarias que contengan este tipo de mascota
+      },
+      { populate: ['tipos'] }
+    ); // Agrega el populate para incluir los tipos
+
     res
       .status(200)
-      .json({ message: 'found all veterinarias', data: veterinarias });
+      .json({ message: 'found matching veterinarias', data: veterinarias });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

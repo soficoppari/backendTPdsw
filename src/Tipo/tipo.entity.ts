@@ -7,6 +7,7 @@ import {
   Collection,
   ManyToOne,
   Rel,
+  ManyToMany,
 } from '@mikro-orm/core';
 import { Mascota } from '../Mascota/mascota.entity.js';
 import { Veterinaria } from '../Veterinaria/veterinaria.entity.js';
@@ -24,6 +25,6 @@ export class Tipo {
   })
   mascotas = new Collection<Mascota>(this);
 
-  @ManyToOne(() => Veterinaria, { nullable: false })
-  veterinaria!: Rel<Veterinaria>;
+  @ManyToMany(() => Veterinaria, (veterinaria) => veterinaria.tipos)
+  veterinarias = new Collection<Veterinaria>(this);
 }

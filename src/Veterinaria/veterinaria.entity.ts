@@ -5,6 +5,7 @@ import {
   OneToMany,
   Collection,
   Cascade,
+  ManyToMany,
 } from '@mikro-orm/core';
 import { Horario } from '../Horario/horario.entity.js';
 import { Turno } from '../Turno/turno.entity.js';
@@ -34,8 +35,6 @@ export class Veterinaria {
   })
   turnos = new Collection<Turno>(this);
 
-  @OneToMany(() => Tipo, (tipo) => tipo.veterinaria, {
-    cascade: [Cascade.ALL],
-  })
+  @ManyToMany(() => Tipo, (tipo) => tipo.veterinarias, { owner: true })
   tipos = new Collection<Tipo>(this);
 }
