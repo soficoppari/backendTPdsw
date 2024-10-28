@@ -9,8 +9,8 @@ import {
   Rel,
 } from '@mikro-orm/core';
 import { Usuario } from '../Usuario/usuario.entity.js';
-import { Tipo } from '../Tipo/tipo.entity.js';
 import { Turno } from '../Turno/turno.entity.js';
+import { Especie } from '../Especie/especie.entity.js';
 
 @Entity()
 export class Mascota {
@@ -25,8 +25,8 @@ export class Mascota {
   @ManyToOne(() => Usuario, { nullable: false })
   usuario!: Rel<Usuario>;
 
-  @ManyToOne(() => Tipo, { nullable: false })
-  tipo!: Rel<Tipo>;
+  @ManyToOne(() => Especie, { nullable: false })
+  especie!: Rel<Especie>;
 
   @OneToMany(() => Turno, (turno) => turno.mascota, {
     cascade: [Cascade.ALL],

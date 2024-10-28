@@ -1,17 +1,20 @@
 import { Entity, ManyToOne, PrimaryKey, Property, Rel } from '@mikro-orm/core';
-import { Veterinaria } from '../Veterinaria/veterinaria.entity.js';
+import { Veterinario } from '../Veterinario/veterinario.entity.js';
 
 @Entity()
 export class Horario {
   @PrimaryKey()
   id!: number;
 
-  @Property()
-  fechaHoraInicio!: Date;
+  @Property({ nullable: false })
+  dia!: string;
 
   @Property()
-  fechaHoraFin!: Date;
+  horaInicio!: Date;
 
-  @ManyToOne(() => Veterinaria, { nullable: false })
-  veterinaria!: Rel<Veterinaria>;
+  @Property()
+  horaFin!: Date;
+
+  @ManyToOne(() => Veterinario, { nullable: false })
+  veterinario!: Rel<Veterinario>;
 }

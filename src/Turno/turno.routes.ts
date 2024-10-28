@@ -8,10 +8,10 @@ import {
   remove,
 } from './turno.controller.js';
 
-export const horarioRouter = Router();
+export const turnoRouter = Router();
 
-horarioRouter.get('/', findAll);
-horarioRouter.get('/:id', findOne);
-horarioRouter.post('/', sanitizeTurnoInput, add);
-horarioRouter.put('/:id', sanitizeTurnoInput, update);
-horarioRouter.delete('/:id', sanitizeTurnoInput, remove);
+turnoRouter.get('/', findAll);
+turnoRouter.get('/:id', findOne);
+turnoRouter.post('/', sanitizeTurnoInput, add);
+turnoRouter.put('/:id', sanitizeTurnoInput, update);
+turnoRouter.delete('/:id', sanitizeTurnoInput, remove);

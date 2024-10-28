@@ -1,5 +1,14 @@
-import { Entity, PrimaryKey, Property, ManyToOne } from '@mikro-orm/core';
-import { Tipo } from '../Tipo/tipo.entity';
+import {
+  Cascade,
+  Entity,
+  PrimaryKey,
+  Property,
+  OneToMany,
+  Collection,
+  ManyToMany,
+} from '@mikro-orm/core';
+import { Mascota } from '../Mascota/mascota.entity.js';
+import { Veterinario } from '../Veterinario/veterinario.entity.js';
 
 @Entity()
 export class Especie {
@@ -7,11 +16,13 @@ export class Especie {
   id!: number;
 
   @Property()
-  nombreEspecie!: string;
+  nombre!: string;
 
-  @Property()
-  descripcion!: string;
+  @OneToMany(() => Mascota, (mascota) => mascota.especie, {
+    cascade: [Cascade.ALL],
+  })
+  mascotas = new Collection<Mascota>(this);
 
-  //@ManyToOne(() => Tipo) // Relación de muchos a uno con Tipo
-  //tipo!: Tipo;
+  @ManyToMany(() => Veterinario, (veterinario) => veterinario.especies)
+  veterinarios = new Collection<Veterinario>(this);
 }

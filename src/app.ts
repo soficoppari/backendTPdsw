@@ -2,13 +2,14 @@ import 'reflect-metadata';
 import express, { Request, Response, NextFunction } from 'express';
 import { usuarioRouter } from './Usuario/usuario.routes.js';
 import { mascotaRouter } from './Mascota/mascota.routes.js';
-import { veterinariaRouter } from './Veterinaria/veterinaria.routes.js';
-import { horarioRouter } from './Horario/horario.routes.js';
+import { veterinarioRouter } from './Veterinario/veterinario.routes.js';
 import { antecedenteRouter } from './Antecedente/antecedente.routes.js';
 import { ORM, syncSchema } from './shared/db/orm.js';
 import { RequestContext } from '@mikro-orm/core';
-import { tipoRouter } from './Tipo/tipo.routes.js';
+import { especieRouter } from './Especie/especie.routes.js';
 import cors from 'cors';
+import { turnoRouter } from './Turno/turno.routes.js';
+import { horarioRouter } from './Horario/horario.routes.js';
 
 const app = express();
 app.use(express.json());
@@ -26,10 +27,11 @@ app.use((req, res, next) => RequestContext.create(ORM.em, next));
 
 app.use('/api/usuario', usuarioRouter);
 app.use('/api/mascota', mascotaRouter);
-app.use('/api/veterinaria', veterinariaRouter);
-app.use('/api/horarios', horarioRouter);
+app.use('/api/veterinario', veterinarioRouter);
 app.use('/api/antecedente', antecedenteRouter);
-app.use('/api/tipo', tipoRouter);
+app.use('/api/especie', especieRouter);
+app.use('/api/horario', horarioRouter);
+app.use('/api/turno', turnoRouter);
 
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' });

@@ -11,7 +11,7 @@ function sanitizeTurnoInput(req: Request, res: Response, next: NextFunction) {
     estado: req.body.estado,
     usuarioId: req.body.usuarioId,
     mascotaId: req.body.mascotaId,
-    veterinariaId: req.body.veterinariaId,
+    veterinarioId: req.body.veterinarioId,
   };
 
   // Eliminar propiedades indefinidas

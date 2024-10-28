@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ORM } from '../shared/db/orm.js';
 import { Mascota } from './mascota.entity.js';
 import { Usuario } from '../Usuario/usuario.entity.js';
-import { Tipo } from '../Tipo/tipo.entity.js';
+import { Especie } from '../Especie/especie.entity.js';
 import jwt from 'jsonwebtoken';
 
 const em = ORM.em;
@@ -13,7 +13,7 @@ function sanitizeMascotaInput(req: Request, res: Response, next: NextFunction) {
     nombre: req.body.nombre,
     fechaNacimiento: req.body.fechaNacimiento,
     usuarioId: req.body.usuarioId,
-    tipoId: req.body.tipoId,
+    especieId: req.body.especieId,
     turnos: req.body.turnos,
   };
 
@@ -45,7 +45,7 @@ async function findAll(req: Request, res: Response) {
     const mascotas = await em.find(
       Mascota,
       { usuario: { id: usuarioId } },
-      { populate: ['usuario', 'tipo'] }
+      { populate: ['usuario', 'especie'] }
     );
 
     res.status(200).json({ message: 'Mascotas encontradas', data: mascotas });
@@ -60,7 +60,7 @@ async function findOne(req: Request, res: Response) {
     const mascota = await em.findOneOrFail(
       Mascota,
       { id },
-      { populate: ['usuario', 'tipo'] }
+      { populate: ['usuario', 'especie'] }
     ); // Poblar usuario
     res.status(200).json({ message: 'found mascota', data: mascota });
   } catch (error: any) {
@@ -70,7 +70,7 @@ async function findOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
-    const { nombre, fechaNacimiento, usuarioId, tipoId } =
+    const { nombre, fechaNacimiento, usuarioId, especieId } =
       req.body.sanitizedInput;
 
     // Log para verificar que los datos se reciben correctamente
@@ -78,14 +78,14 @@ async function add(req: Request, res: Response) {
       nombre,
       fechaNacimiento,
       usuarioId,
-      tipoId,
+      especieId,
     });
 
     // Busca el usuario por ID
     const usuario = await em.findOneOrFail(Usuario, { id: usuarioId });
     console.log('Usuario encontrado:', usuario);
 
-    const tipo = await em.findOneOrFail(Tipo, { id: tipoId });
+    const especie = await em.findOneOrFail(Especie, { id: especieId });
     console.log('Usuario encontrado:', usuario);
 
     // Crea la mascota asociada al usuario
@@ -93,7 +93,7 @@ async function add(req: Request, res: Response) {
       nombre,
       fechaNacimiento,
       usuario,
-      tipo,
+      especie,
     });
     console.log('Mascota creada:', mascota);
 
@@ -125,11 +125,11 @@ async function update(req: Request, res: Response) {
       req.body.sanitizedInput.usuario = usuario;
     }
 
-    if (req.body.sanitizedInput.tipoId) {
-      const tipo = await em.findOneOrFail(Tipo, {
-        id: req.body.sanitizedInput.tipoId,
+    if (req.body.sanitizedInput.especieId) {
+      const especie = await em.findOneOrFail(Especie, {
+        id: req.body.sanitizedInput.especieId,
       });
-      req.body.sanitizedInput.tipo = tipo;
+      req.body.sanitizedInput.especie = especie;
     }
 
     em.assign(mascotaToUpdate, req.body.sanitizedInput);
