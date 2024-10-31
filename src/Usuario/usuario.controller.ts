@@ -47,6 +47,9 @@ async function findOne(req: Request, res: Response) {
     ); // Poblar mascotas
     res.status(200).json({ message: 'found usuario', data: usuario });
   } catch (error: any) {
+    if (error.name === 'EntityNotFound') {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
     res.status(500).json({ message: error.message });
   }
 }

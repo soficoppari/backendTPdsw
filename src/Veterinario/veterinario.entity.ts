@@ -23,6 +23,9 @@ export class Veterinario {
   nombre!: string;
 
   @Property({ nullable: false })
+  apellido!: string;
+
+  @Property({ nullable: false })
   direccion!: string;
 
   @OneToMany(() => Horario, (horario) => horario.veterinario, {

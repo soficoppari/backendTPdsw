@@ -15,6 +15,7 @@ function sanitizeVeterinarioInput(
     id: req.body.id,
     matricula: req.body.matricula,
     nombre: req.body.nombre,
+    apellido: req.body.apellido,
     direccion: req.body.direccion,
     nroTelefono: req.body.nroTelefono,
     horarios: req.body.horarios,
