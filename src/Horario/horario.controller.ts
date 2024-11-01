@@ -1,15 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import { ORM } from '../shared/db/orm.js';
 import { Horario } from './horario.entity.js';
+import { Veterinario } from '../Veterinario/veterinario.entity.js';
 
 const em = ORM.em;
 
 function sanitizeHorarioInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     id: req.body.id,
-    fecha_hora_ini: req.body.horaInicio,
-    fecha_hora_fin: req.body.horaFin,
-    veterinaria: req.body.veterinaria,
+    dia: req.body.dia,
+    horaInicio: req.body.horaInicio,
+    horaFin: req.body.horaFin,
+    veterinarioId: req.body.veterinarioId,
   };
 
   // Eliminar propiedades indefinidas
@@ -43,6 +45,20 @@ async function findOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
+    const { dia, horaInicio, horaFin, veterinarioId } = req.body.sanitizedInput;
+
+    console.log('Datos recibidos:', {
+      dia,
+      horaInicio,
+      horaFin,
+      veterinarioId,
+    });
+
+    //Busca el veterinario
+    const veterinario = await em.findOneOrFail(Veterinario, {
+      id: veterinarioId,
+    });
+
     const horario = em.create(Horario, req.body.sanitizedInput);
     await em.flush();
     res.status(201).json({ message: 'horario created', data: horario });

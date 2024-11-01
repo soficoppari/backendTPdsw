@@ -3,7 +3,6 @@ import { Veterinario } from './veterinario.entity.js';
 import { ORM } from '../shared/db/orm.js';
 import { Horario } from '../Horario/horario.entity.js';
 import { Especie } from '../Especie/especie.entity.js';
-
 const em = ORM.em;
 
 function sanitizeVeterinarioInput(
@@ -35,11 +34,11 @@ function sanitizeVeterinarioInput(
 
 async function findAll(req: Request, res: Response) {
   try {
-    // Convierte tipoMascota a number
-    const tipoMascotaId = Number(req.query.tipoMascota);
-
-    // Verifica que el tipoMascotaId sea un número válido
-    if (isNaN(tipoMascotaId)) {
+    // Convierte especieMascota a number
+    const especie = Number(req.query.especie);
+    console.log('especieMascota recibido:', especie);
+    // Verifica que el especie sea un número válido
+    if (isNaN(especie)) {
       return res
         .status(400)
         .json({ message: 'El tipo de mascota debe ser un ID numérico válido' });
@@ -49,7 +48,7 @@ async function findAll(req: Request, res: Response) {
     const veterinarios = await em.find(
       Veterinario,
       {
-        especies: { $in: [tipoMascotaId] }, // Busca veterinarios que contengan este tipo de mascota
+        especies: { $in: [especie] }, // Busca veterinarios que contengan este tipo de mascota
       },
       { populate: ['especies'] }
     ); // Agrega el populate para incluir los especies
@@ -74,21 +73,37 @@ async function findOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
-    // Crea el veterinario sin los horarios y las especies inicialmente
+    // Crear instancia de Veterinario sin asignar horarios ni especies todavía
     const veterinario = em.create(Veterinario, {
       ...req.body.sanitizedInput,
-      horarios: [], // Inicializa como vacío para luego asignar los horarios
-      especies: [], // Inicializa como vacío para luego asignar las especies
+      horarios: [],
+      especies: [],
     });
 
     // Agregar horarios si están incluidos en el input
     if (req.body.sanitizedInput.horarios) {
       req.body.sanitizedInput.horarios.forEach(
-        (horarioData: { dia: string; horaInicio: Date; horaFin: Date }) => {
+        (horarioData: {
+          dia: string;
+          horaInicio: string | Date;
+          horaFin: string | Date;
+        }) => {
+          // Convertir a Date si es necesario
+          const horaInicio = new Date(horarioData.horaInicio);
+          const horaFin = new Date(horarioData.horaFin);
+
+          // Validar que las fechas sean válidas
+          if (isNaN(horaInicio.getTime()) || isNaN(horaFin.getTime())) {
+            throw new Error(
+              'Los valores de horaInicio o horaFin no son fechas válidas'
+            );
+          }
+
+          // Crear y asignar horario
           const horario = em.create(Horario, {
             dia: horarioData.dia,
-            horaInicio: horarioData.horaInicio,
-            horaFin: horarioData.horaFin,
+            horaInicio,
+            horaFin,
             veterinario,
           });
           veterinario.horarios.add(horario);
@@ -96,20 +111,21 @@ async function add(req: Request, res: Response) {
       );
     }
 
-    // Asignar especies si están incluidas en el input
+    // Agregar especies si están incluidas en el input
     if (req.body.sanitizedInput.especies) {
-      const especies = await em.find(Especie, {
-        id: { $in: req.body.sanitizedInput.especies }, // Busca especies por sus IDs
+      req.body.sanitizedInput.especies.forEach((especieId: number) => {
+        // Obtener referencia de la especie
+        const especie = em.getReference(Especie, especieId);
+        veterinario.especies.add(especie);
       });
-      especies.forEach((especie) => veterinario.especies.add(especie));
     }
 
-    // Guarda el nuevo veterinario y sus relaciones en la base de datos
-    await em.flush();
-
-    res.status(201).json({ message: 'Veterinario creado', data: veterinario });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    // Persistir y guardar el veterinario junto con sus relaciones
+    await em.persistAndFlush(veterinario);
+    res.status(201).json(veterinario);
+  } catch (error) {
+    console.error('Error al crear el veterinario:', error);
+    res.status(500).json({ message: 'Error al crear el veterinario' });
   }
 }
 
