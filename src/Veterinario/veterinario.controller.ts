@@ -50,7 +50,7 @@ async function findAll(req: Request, res: Response) {
       {
         especies: { $in: [especie] }, // Busca veterinarios que contengan este tipo de mascota
       },
-      { populate: ['especies'] }
+      { populate: ['especies', 'horarios'] }
     ); // Agrega el populate para incluir los especies
 
     res
@@ -64,7 +64,11 @@ async function findAll(req: Request, res: Response) {
 async function findOne(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id);
-    const veterinario = await em.findOneOrFail(Veterinario, { id });
+    const veterinario = await em.findOneOrFail(
+      Veterinario,
+      { id },
+      { populate: ['especies', 'horarios'] }
+    );
     res.status(200).json({ message: 'found veterinario', data: veterinario });
   } catch (error: any) {
     res.status(500).json({ message: error.message });

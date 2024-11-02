@@ -15,7 +15,6 @@ function sanitizeUsuarioInput(req: Request, res: Response, next: NextFunction) {
     nroTelefono: req.body.nroTelefono,
     contraseniaUser: req.body.contraseniaUser,
     mascotas: req.body.mascotas,
-    turnos: req.body.turnos,
   };
 
   // Eliminar propiedades indefinidas

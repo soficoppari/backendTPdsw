@@ -1,15 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import { ORM } from '../shared/db/orm.js';
 import { Turno } from './turno.entity.js';
+import { Mascota } from '../Mascota/mascota.entity.js';
+import { Veterinario } from '../Veterinario/veterinario.entity.js';
+import { Horario } from '../Horario/horario.entity.js';
 
 const em = ORM.em;
 
 function sanitizeTurnoInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     id: req.body.id,
-    horarios: req.body.horarios,
     estado: req.body.estado,
-    usuarioId: req.body.usuarioId,
     mascotaId: req.body.mascotaId,
     veterinarioId: req.body.veterinarioId,
   };
@@ -45,11 +46,39 @@ async function findOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
-    const turno = em.create(Turno, req.body.sanitizedInput);
+    const { mascotaId, veterinarioId } = req.body.sanitizedInput;
+
+    // Validación de IDs requeridos
+    if (!mascotaId || !veterinarioId) {
+      return res.status(400).json({
+        message: 'Faltan datos requeridos: mascotaId, veterinarioId ',
+      });
+    }
+
+    // Verificar existencia de la mascota, veterinario y horario
+    const mascota = await em.findOne(Mascota, { id: mascotaId });
+    const veterinario = await em.findOne(Veterinario, { id: veterinarioId });
+
+    if (!mascota || !veterinario) {
+      return res.status(404).json({
+        message: 'Mascota, Veterinario o Horario no encontrado',
+      });
+    }
+
+    // Crear el turno
+    const turno = em.create(Turno, {
+      estado: true, // Asignar estado 'true' como disponible
+      mascota,
+      veterinario,
+    });
+
     await em.flush();
-    res.status(201).json({ message: 'turno created', data: turno });
+
+    return res
+      .status(201)
+      .json({ message: 'Turno creado con éxito', data: turno });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 

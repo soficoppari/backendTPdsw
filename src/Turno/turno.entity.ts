@@ -11,9 +11,6 @@ export class Turno {
   @Property()
   estado!: boolean;
 
-  @ManyToOne(() => Usuario, { nullable: false })
-  usuario!: Rel<Usuario>; // Relación directa con Usuario
-
   @ManyToOne(() => Mascota, { nullable: false })
   mascota!: Rel<Mascota>; // Relación directa con Mascota
 

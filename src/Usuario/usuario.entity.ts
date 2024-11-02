@@ -33,9 +33,4 @@ export class Usuario {
     cascade: [Cascade.ALL],
   })
   mascotas = new Collection<Mascota>(this);
-
-  @OneToMany(() => Turno, (turno) => turno.usuario, {
-    cascade: [Cascade.ALL],
-  })
-  turnos = new Collection<Turno>(this); // Relación de uno a muchos con Turnos
 }
