@@ -4,7 +4,7 @@ import { ORM } from '../shared/db/orm.js';
 import { Horario } from '../Horario/horario.entity.js';
 import { Especie } from '../Especie/especie.entity.js';
 const em = ORM.em;
-
+//date
 function sanitizeVeterinarioInput(
   req: Request,
   res: Response,
@@ -77,6 +77,8 @@ async function findOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
+    console.log('Datos del input:', req.body.sanitizedInput);
+
     // Crear instancia de Veterinario sin asignar horarios ni especies todavía
     const veterinario = em.create(Veterinario, {
       ...req.body.sanitizedInput,
@@ -87,29 +89,29 @@ async function add(req: Request, res: Response) {
     // Agregar horarios si están incluidos en el input
     if (req.body.sanitizedInput.horarios) {
       req.body.sanitizedInput.horarios.forEach(
-        (horarioData: {
-          dia: string;
-          horaInicio: string | Date;
-          horaFin: string | Date;
-        }) => {
-          // Convertir a Date si es necesario
-          const horaInicio = new Date(horarioData.horaInicio);
-          const horaFin = new Date(horarioData.horaFin);
+        (horarioData: { dia: string; horaInicio: string; horaFin: string }) => {
+          // Verificar que horaInicio y horaFin estén en el formato HH:mm
+          const horaInicio = horarioData.horaInicio;
+          const horaFin = horarioData.horaFin;
 
-          // Validar que las fechas sean válidas
-          if (isNaN(horaInicio.getTime()) || isNaN(horaFin.getTime())) {
+          if (
+            !/^\d{2}:\d{2}$/.test(horaInicio) ||
+            !/^\d{2}:\d{2}$/.test(horaFin)
+          ) {
             throw new Error(
-              'Los valores de horaInicio o horaFin no son fechas válidas'
+              'Los valores de horaInicio o horaFin no están en formato HH:mm'
             );
           }
 
-          // Crear y asignar horario
+          // Crear el horario con las horas en formato HH:mm
           const horario = em.create(Horario, {
             dia: horarioData.dia,
             horaInicio,
             horaFin,
             veterinario,
           });
+
+          // Agregar el horario a la lista de horarios del veterinario
           veterinario.horarios.add(horario);
         }
       );
@@ -118,9 +120,12 @@ async function add(req: Request, res: Response) {
     // Agregar especies si están incluidas en el input
     if (req.body.sanitizedInput.especies) {
       req.body.sanitizedInput.especies.forEach((especieId: number) => {
-        // Obtener referencia de la especie
         const especie = em.getReference(Especie, especieId);
-        veterinario.especies.add(especie);
+        if (especie) {
+          veterinario.especies.add(especie);
+        } else {
+          console.warn(`Especie con ID ${especieId} no encontrada`);
+        }
       });
     }
 

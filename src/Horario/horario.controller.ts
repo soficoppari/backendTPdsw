@@ -6,21 +6,16 @@ import { Veterinario } from '../Veterinario/veterinario.entity.js';
 const em = ORM.em;
 
 function sanitizeHorarioInput(req: Request, res: Response, next: NextFunction) {
+  const { dia, horaInicio, horaFin, veterinarioId } = req.body;
+
+  // Validación preliminar
+
   req.body.sanitizedInput = {
-    id: req.body.id,
-    dia: req.body.dia,
-    horaInicio: req.body.horaInicio,
-    horaFin: req.body.horaFin,
-    veterinarioId: req.body.veterinarioId,
+    dia,
+    horaInicio,
+    horaFin,
+    veterinarioId,
   };
-
-  // Eliminar propiedades indefinidas
-  Object.keys(req.body.sanitizedInput).forEach((key) => {
-    if (req.body.sanitizedInput[key] === undefined) {
-      delete req.body.sanitizedInput[key];
-    }
-  });
-
   next();
 }
 
@@ -47,22 +42,36 @@ async function add(req: Request, res: Response) {
   try {
     const { dia, horaInicio, horaFin, veterinarioId } = req.body.sanitizedInput;
 
-    console.log('Datos recibidos:', {
+    console.log('Datos del horario:', {
       dia,
       horaInicio,
       horaFin,
       veterinarioId,
     });
 
-    //Busca el veterinario
+    // Formatear `horaInicio` y `horaFin` para almacenar solo la hora en formato HH:mm
+    const formattedHoraInicio = new Date(horaInicio)
+      .toISOString()
+      .slice(11, 16);
+    const formattedHoraFin = new Date(horaFin).toISOString().slice(11, 16);
+
+    // Buscar el veterinario
     const veterinario = await em.findOneOrFail(Veterinario, {
       id: veterinarioId,
     });
 
-    const horario = em.create(Horario, req.body.sanitizedInput);
-    await em.flush();
-    res.status(201).json({ message: 'horario created', data: horario });
+    // Crear y persistir el horario con las horas formateadas
+    const horario = em.create(Horario, {
+      dia,
+      horaInicio: formattedHoraInicio,
+      horaFin: formattedHoraFin,
+      veterinario,
+    });
+    await em.persistAndFlush(horario);
+
+    res.status(201).json({ message: 'Horario creado', data: horario });
   } catch (error: any) {
+    console.error('Error al crear el horario:', error);
     res.status(500).json({ message: error.message });
   }
 }

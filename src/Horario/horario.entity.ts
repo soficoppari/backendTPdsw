@@ -10,10 +10,10 @@ export class Horario {
   dia!: string;
 
   @Property()
-  horaInicio!: Date;
+  horaInicio!: string;
 
   @Property()
-  horaFin!: Date;
+  horaFin!: string;
 
   @ManyToOne(() => Veterinario, { nullable: false })
   veterinario!: Rel<Veterinario>;
