@@ -11,9 +11,15 @@ export class Turno {
   @Property()
   estado!: boolean;
 
+  @Property({ nullable: false, unique: true })
+  fechaHora!: string;
+
   @ManyToOne(() => Mascota, { nullable: false })
   mascota!: Rel<Mascota>; // Relación directa con Mascota
 
   @ManyToOne(() => Veterinario, { nullable: false })
   veterinario!: Rel<Veterinario>;
+
+  @ManyToOne(() => Usuario, { nullable: false })
+  usuario!: Rel<Usuario>;
 }
