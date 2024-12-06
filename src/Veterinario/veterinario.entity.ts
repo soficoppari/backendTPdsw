@@ -28,10 +28,14 @@ export class Veterinario {
   @Property({ nullable: false })
   direccion!: string;
 
+  @Property({ nullable: false })
+  nroTelefono!: number;
+
   @OneToMany(() => Horario, (horario) => horario.veterinario, {
     cascade: [Cascade.ALL],
   })
   horarios = new Collection<Horario>(this);
+  
 
   @OneToMany(() => Turno, (turno) => turno.veterinario, {
     cascade: [Cascade.ALL],
