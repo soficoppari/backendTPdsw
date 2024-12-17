@@ -7,8 +7,8 @@ import {
   Collection,
   ManyToMany,
 } from '@mikro-orm/core';
-import { Mascota } from '../Mascota/mascota.entity.js';
 import { Veterinario } from '../Veterinario/veterinario.entity.js';
+import { Raza } from '../Raza/raza.entity.js';
 
 @Entity()
 export class Especie {
@@ -18,10 +18,10 @@ export class Especie {
   @Property()
   nombre!: string;
 
-  @OneToMany(() => Mascota, (mascota) => mascota.especie, {
+  @OneToMany(() => Raza, (raza) => raza.especie, {
     cascade: [Cascade.ALL],
   })
-  mascotas = new Collection<Mascota>(this);
+  razas = new Collection<Raza>(this);
 
   @ManyToMany(() => Veterinario, (veterinario) => veterinario.especies)
   veterinarios = new Collection<Veterinario>(this);

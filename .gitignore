@@ -1,9 +1,6 @@
 # coverage reports
 coverage
 
-# API keys and secrets
-.env
-
 # dependency directory
 node_modules
 

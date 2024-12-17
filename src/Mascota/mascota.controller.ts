@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ORM } from '../shared/db/orm.js';
 import { Mascota } from './mascota.entity.js';
 import { Usuario } from '../Usuario/usuario.entity.js';
-import { Especie } from '../Especie/especie.entity.js';
+import { Raza } from '../Raza/raza.entity.js';
 import jwt from 'jsonwebtoken';
 
 const em = ORM.em;
@@ -13,7 +13,7 @@ function sanitizeMascotaInput(req: Request, res: Response, next: NextFunction) {
     nombre: req.body.nombre,
     fechaNacimiento: req.body.fechaNacimiento,
     usuarioId: req.body.usuarioId,
-    especieId: req.body.especieId,
+    razaId: req.body.razaId,
     turnos: req.body.turnos,
   };
 
@@ -38,19 +38,26 @@ async function findAll(req: Request, res: Response) {
     }
 
     // Verificar y decodificar el token
-    const decodedToken: any = jwt.verify(token, 'tu_clave_secreta');
+    const decodedToken: any = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    );
     const usuarioId = decodedToken.id; // Extraer el usuarioId del token
+    console.log('Usuario ID extraído del token:', usuarioId);
 
     // Buscar las mascotas asociadas al usuario loggeado
     const mascotas = await em.find(
       Mascota,
       { usuario: { id: usuarioId } },
-      { populate: ['usuario', 'especie'] }
+      { populate: ['usuario', 'raza.especie'] }
     );
 
     res.status(200).json({ message: 'Mascotas encontradas', data: mascotas });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    console.error('Error en findAll:', error); // Imprime el error en la consola del servidor
+    res
+      .status(500)
+      .json({ message: 'Error interno del servidor', details: error.message });
   }
 }
 
@@ -60,7 +67,7 @@ async function findOne(req: Request, res: Response) {
     const mascota = await em.findOneOrFail(
       Mascota,
       { id },
-      { populate: ['usuario', 'especie'] }
+      { populate: ['usuario', 'raza'] }
     ); // Poblar usuario
     res.status(200).json({ message: 'found mascota', data: mascota });
   } catch (error: any) {
@@ -70,7 +77,7 @@ async function findOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
-    const { nombre, fechaNacimiento, usuarioId, especieId } =
+    const { nombre, fechaNacimiento, usuarioId, razaId } =
       req.body.sanitizedInput;
 
     // Log para verificar que los datos se reciben correctamente
@@ -78,14 +85,14 @@ async function add(req: Request, res: Response) {
       nombre,
       fechaNacimiento,
       usuarioId,
-      especieId,
+      razaId,
     });
 
     // Busca el usuario por ID
     const usuario = await em.findOneOrFail(Usuario, { id: usuarioId });
     console.log('Usuario encontrado:', usuario);
 
-    const especie = await em.findOneOrFail(Especie, { id: especieId });
+    const raza = await em.findOneOrFail(Raza, { id: razaId });
     console.log('Usuario encontrado:', usuario);
 
     // Crea la mascota asociada al usuario
@@ -93,7 +100,7 @@ async function add(req: Request, res: Response) {
       nombre,
       fechaNacimiento,
       usuario,
-      especie,
+      raza,
     });
     console.log('Mascota creada:', mascota);
 
@@ -125,11 +132,11 @@ async function update(req: Request, res: Response) {
       req.body.sanitizedInput.usuario = usuario;
     }
 
-    if (req.body.sanitizedInput.especieId) {
-      const especie = await em.findOneOrFail(Especie, {
-        id: req.body.sanitizedInput.especieId,
+    if (req.body.sanitizedInput.razaId) {
+      const raza = await em.findOneOrFail(Raza, {
+        id: req.body.sanitizedInput.razaId,
       });
-      req.body.sanitizedInput.especie = especie;
+      req.body.sanitizedInput.raza = raza;
     }
 
     em.assign(mascotaToUpdate, req.body.sanitizedInput);

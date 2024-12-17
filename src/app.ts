@@ -10,6 +10,11 @@ import { especieRouter } from './Especie/especie.routes.js';
 import cors from 'cors';
 import { turnoRouter } from './Turno/turno.routes.js';
 import { horarioRouter } from './Horario/horario.routes.js';
+import { razaRouter } from './Raza/raza.routes.js';
+import loginRouter from './Login/login.routes.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
@@ -32,6 +37,8 @@ app.use('/api/antecedente', antecedenteRouter);
 app.use('/api/especie', especieRouter);
 app.use('/api/horario', horarioRouter);
 app.use('/api/turno', turnoRouter);
+app.use('/api/raza', razaRouter);
+app.use('/api/login', loginRouter);
 
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' });

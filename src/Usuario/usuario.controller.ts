@@ -13,7 +13,7 @@ function sanitizeUsuarioInput(req: Request, res: Response, next: NextFunction) {
     apellido: req.body.apellido,
     email: req.body.email,
     nroTelefono: req.body.nroTelefono,
-    contraseniaUser: req.body.contraseniaUser,
+    contrasenia: req.body.contrasenia,
     mascotas: req.body.mascotas,
     turnos: req.body.turnos,
   };
@@ -66,10 +66,10 @@ async function add(req: Request, res: Response) {
 
     //Encriptar la contraseña
     const hashedPassword = await bcrypt.hash(
-      req.body.sanitizedInput.contraseniaUser,
+      req.body.sanitizedInput.contrasenia,
       10
     );
-    (req.body.sanitizedInput.contraseniaUser = hashedPassword),
+    (req.body.sanitizedInput.contrasenia = hashedPassword),
       (req.body.sanitizedInput.mascotas = []); // Inicializa la colección vacía;
     const usuario = em.create(Usuario, req.body.sanitizedInput);
     await em.flush();
@@ -81,7 +81,7 @@ async function add(req: Request, res: Response) {
 
 async function login(req: Request, res: Response) {
   try {
-    const { email, contraseniaUser } = req.body;
+    const { email, contrasenia } = req.body;
 
     // Verificar si el usuario existe
     const usuario = await em.findOne(Usuario, { email });
@@ -91,8 +91,8 @@ async function login(req: Request, res: Response) {
 
     // Comparar contraseñas
     const validPassword = await bcrypt.compare(
-      contraseniaUser,
-      usuario.contraseniaUser
+      contrasenia,
+      usuario.contrasenia
     );
     if (!validPassword) {
       return res.status(400).json({ message: 'Contraseña incorrecta' });

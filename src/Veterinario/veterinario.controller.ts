@@ -3,6 +3,8 @@ import { Veterinario } from './veterinario.entity.js';
 import { ORM } from '../shared/db/orm.js';
 import { Horario } from '../Horario/horario.entity.js';
 import { Especie } from '../Especie/especie.entity.js';
+import bcrypt from 'bcrypt';
+
 const em = ORM.em;
 //date
 function sanitizeVeterinarioInput(
@@ -17,6 +19,8 @@ function sanitizeVeterinarioInput(
     apellido: req.body.apellido,
     direccion: req.body.direccion,
     nroTelefono: req.body.nroTelefono,
+    email: req.body.email,
+    contrasenia: req.body.contrasenia,
     horarios: req.body.horarios,
     turnos: req.body.turnos,
     especies: req.body.especies,
@@ -79,9 +83,24 @@ async function add(req: Request, res: Response) {
   try {
     console.log('Datos del input:', req.body.sanitizedInput);
 
+    // Verifica si ya existe un veterinario con el mismo email
+    const existingVeterinario = await em.findOne(Veterinario, {
+      email: req.body.sanitizedInput.email,
+    });
+    if (existingVeterinario) {
+      return res.status(400).json({ message: 'Email ya en uso' });
+    }
+
+    // Encriptar la contraseña
+    const hashedPassword = await bcrypt.hash(
+      req.body.sanitizedInput.contrasenia,
+      10
+    );
+
     // Crear instancia de Veterinario sin asignar horarios ni especies todavía
     const veterinario = em.create(Veterinario, {
       ...req.body.sanitizedInput,
+      contrasenia: hashedPassword, // Usar la contraseña encriptada
       horarios: [],
       especies: [],
     });
@@ -91,8 +110,10 @@ async function add(req: Request, res: Response) {
       req.body.sanitizedInput.horarios.forEach(
         (horarioData: { dia: string; horaInicio: string; horaFin: string }) => {
           // Verificar que horaInicio y horaFin estén en el formato HH:mm
-          const horaInicio = horarioData.horaInicio;
-          const horaFin = horarioData.horaFin;
+          const horaInicio = horarioData.horaInicio.trim();
+          const horaFin = horarioData.horaFin.trim();
+
+          console.log('horaInicio:', horaInicio, 'horaFin:', horaFin);
 
           if (
             !/^\d{2}:\d{2}$/.test(horaInicio) ||
@@ -131,10 +152,14 @@ async function add(req: Request, res: Response) {
 
     // Persistir y guardar el veterinario junto con sus relaciones
     await em.persistAndFlush(veterinario);
-    res.status(201).json(veterinario);
-  } catch (error) {
+    res
+      .status(201)
+      .json({ message: 'Veterinario creado exitosamente', data: veterinario });
+  } catch (error: any) {
     console.error('Error al crear el veterinario:', error);
-    res.status(500).json({ message: 'Error al crear el veterinario' });
+    res
+      .status(500)
+      .json({ message: error.message || 'Error al crear el veterinario' });
   }
 }
 

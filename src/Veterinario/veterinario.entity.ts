@@ -28,6 +28,15 @@ export class Veterinario {
   @Property({ nullable: false })
   direccion!: string;
 
+  @Property({ nullable: false })
+  nroTelefono!: number;
+
+  @Property({ nullable: false, unique: true })
+  email!: string;
+
+  @Property({ nullable: false, unique: true })
+  contrasenia!: string;
+
   @OneToMany(() => Horario, (horario) => horario.veterinario, {
     cascade: [Cascade.ALL],
   })

@@ -20,14 +20,14 @@ export class Usuario {
   @Property()
   apellido!: string;
 
-  @Property()
+  @Property({ nullable: false, unique: true })
   email!: string;
 
   @Property()
   nroTelefono!: number;
 
-  @Property()
-  contraseniaUser!: string;
+  @Property({ nullable: false, unique: true })
+  contrasenia!: string;
 
   @OneToMany(() => Mascota, (mascota) => mascota.usuario, {
     cascade: [Cascade.ALL],
