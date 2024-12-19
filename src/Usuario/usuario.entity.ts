@@ -8,6 +8,7 @@ import {
 } from '@mikro-orm/core';
 import { Mascota } from '../Mascota/mascota.entity.js';
 import { Turno } from '../Turno/turno.entity.js';
+import { Calificacion } from '../Calificacion/calificacion.entity.js';
 
 @Entity()
 export class Usuario {
@@ -38,4 +39,9 @@ export class Usuario {
     cascade: [Cascade.ALL],
   })
   turnos = new Collection<Turno>(this);
+
+  @OneToMany(() => Calificacion, (calificacion) => calificacion.usuario, {
+    cascade: [Cascade.ALL],
+  })
+  calificaciones = new Collection<Calificacion>(this); // Reseñas creadas por el usuario.
 }

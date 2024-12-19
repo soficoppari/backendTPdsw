@@ -11,6 +11,8 @@ import {
 import { Usuario } from '../Usuario/usuario.entity.js';
 import { Turno } from '../Turno/turno.entity.js';
 import { Raza } from '../Raza/raza.entity.js';
+import { Calificacion } from '../Calificacion/calificacion.entity.js';
+
 @Entity()
 export class Mascota {
   @PrimaryKey()

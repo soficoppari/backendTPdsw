@@ -10,6 +10,7 @@ import {
 import { Turno } from '../Turno/turno.entity.js';
 import { Especie } from '../Especie/especie.entity.js';
 import { Horario } from '../Horario/horario.entity.js';
+import { Calificacion } from '../Calificacion/calificacion.entity.js';
 
 @Entity()
 export class Veterinario {
@@ -49,4 +50,9 @@ export class Veterinario {
 
   @ManyToMany(() => Especie, (especie) => especie.veterinarios, { owner: true })
   especies = new Collection<Especie>(this);
+
+  @OneToMany(() => Calificacion, (calificacion) => calificacion.veterinario, {
+    cascade: [Cascade.ALL],
+  })
+  calificaciones = new Collection<Calificacion>(this);
 }

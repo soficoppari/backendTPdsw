@@ -4,6 +4,7 @@ import { Turno } from './turno.entity.js';
 import { Mascota } from '../Mascota/mascota.entity.js';
 import { Veterinario } from '../Veterinario/veterinario.entity.js';
 import { Usuario } from '../Usuario/usuario.entity.js';
+import { EstadoTurno } from './turno.enum.js';
 
 const em = ORM.em;
 
@@ -78,37 +79,96 @@ async function add(req: Request, res: Response) {
     // Validación de IDs requeridos
     if (!mascotaId || !veterinarioId || !usuarioId) {
       return res.status(400).json({
-        message: 'Faltan datos requeridos: mascotaId, veterinarioId ',
+        message: 'Faltan datos requeridos: mascotaId, veterinarioId, usuarioId',
       });
     }
 
-    // Verificar existencia de la mascota, veterinario y horario
+    // Validación de fecha
+    if (!fechaHora || isNaN(Date.parse(fechaHora))) {
+      return res
+        .status(400)
+        .json({ message: 'fechaHora es inválida o está vacía' });
+    }
+
+    // Verificar existencia de la mascota, veterinario y usuario
     const mascota = await em.findOne(Mascota, { id: mascotaId });
     const veterinario = await em.findOne(Veterinario, { id: veterinarioId });
     const usuario = await em.findOne(Usuario, { id: usuarioId });
 
-    if (!mascota || !veterinario || !usuario) {
-      return res.status(404).json({
-        message: 'Mascota, Veterinario o Horario no encontrado',
+    if (!mascota)
+      return res.status(404).json({ message: 'Mascota no encontrada' });
+    if (!veterinario)
+      return res.status(404).json({ message: 'Veterinario no encontrado' });
+    if (!usuario)
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+
+    // Validar que la mascota pertenece al usuario
+    if (mascota.usuario.id !== usuarioId) {
+      return res.status(403).json({
+        message: 'La mascota no pertenece al usuario proporcionado',
       });
     }
 
-    // Crear el turno
+    // Verificar conflictos de turnos
+    const turnoExistente = await em.findOne(Turno, {
+      fechaHora,
+      veterinario: veterinarioId,
+    });
+
+    if (turnoExistente) {
+      return res.status(409).json({
+        message:
+          'El veterinario ya tiene un turno asignado en esa fecha y hora',
+      });
+    }
+
+    // Crear y guardar el turno
     const turno = em.create(Turno, {
-      estado: true, // Asignar estado 'true' como disponible
+      estado: EstadoTurno.PENDIENTE,
       fechaHora,
       mascota,
       veterinario,
       usuario,
     });
 
-    await em.flush();
+    await em.persistAndFlush(turno);
 
     return res
       .status(201)
       .json({ message: 'Turno creado con éxito', data: turno });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
+  }
+}
+
+async function completarTurno(req: Request, res: Response) {
+  try {
+    const { turnoId } = req.params;
+
+    // Buscar el turno
+    const turno = await em.findOne(Turno, { id: parseInt(turnoId, 10) });
+    if (!turno) {
+      return res.status(404).json({ message: 'Turno no encontrado.' });
+    }
+
+    // Verificar que la fecha del turno sea anterior o igual a la fecha actual
+    const ahora = new Date();
+    if (new Date(turno.fechaHora) > ahora) {
+      return res.status(400).json({
+        message: 'El turno no puede completarse porque aún no ha ocurrido.',
+      });
+    }
+
+    // Cambiar el estado del turno a COMPLETADO
+    turno.estado = EstadoTurno.COMPLETADO;
+    await em.persistAndFlush(turno);
+
+    res.status(200).json({
+      message: 'El turno ha sido marcado como completado.',
+      data: turno,
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -135,4 +195,12 @@ async function remove(req: Request, res: Response) {
   }
 }
 
-export { sanitizeTurnoInput, findAll, findOne, add, update, remove };
+export {
+  sanitizeTurnoInput,
+  findAll,
+  findOne,
+  add,
+  completarTurno,
+  update,
+  remove,
+};
