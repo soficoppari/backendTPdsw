@@ -34,12 +34,13 @@ async function findAll(req: Request, res: Response) {
   try {
     const usuarioId = req.query.usuarioId
       ? parseInt(req.query.usuarioId as string)
-      : null; // Obtener usuarioId si está en los parámetros
+      : null;
     const veterinarioId = req.query.veterinarioId
       ? parseInt(req.query.veterinarioId as string)
-      : null; // Obtener veterinarioId si está en los parámetros
+      : null;
 
-    // Validar que al menos uno de los parámetros sea proporcionado
+    console.log('Parametros recibidos:', { usuarioId, veterinarioId });
+
     if (!usuarioId && !veterinarioId) {
       return res.status(400).json({
         message:
@@ -47,44 +48,50 @@ async function findAll(req: Request, res: Response) {
       });
     }
 
-    // Crear el filtro dinámicamente según el parámetro proporcionado
     const filter = usuarioId
       ? { usuario: { id: usuarioId } }
       : { veterinario: { id: veterinarioId } };
 
-    // Obtener los turnos de la base de datos según el filtro
+    console.log('Filtro aplicado:', filter);
+
     const turnos = await em.find(Turno, filter, {
-      populate: ['mascota', 'veterinario'], // Relacionar las entidades necesarias
+      populate: ['mascota', 'veterinario', 'usuario', 'calificacion'],
     });
 
-    // Manejar el caso donde no se encuentran turnos
+    console.log('Turnos encontrados:', turnos);
+
     if (turnos.length === 0) {
       return res
         .status(200)
         .json({ message: 'No se encontraron turnos', data: [] });
     }
 
-    // Responder con los turnos encontrados
     res.status(200).json({ message: 'found turnos', data: turnos });
   } catch (error: any) {
-    // Manejo de errores
+    console.error('Error al buscar turnos:', error);
     res.status(500).json({ message: error.message });
   }
 }
 
-// Controlador para obtener tun turno específico
+// Controlador para obtener un turno específico
 async function findOne(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id);
+    console.log('Buscando turno con ID:', id);
+
     const turno = await em.findOneOrFail(
       Turno,
       { id },
       {
-        populate: ['mascota', 'veterinario'], // Carga las relaciones necesarias
+        populate: ['mascota', 'veterinario'],
       }
     );
+
+    console.log('Turno encontrado:', turno);
+
     res.status(200).json({ message: 'found turno', data: turno });
   } catch (error: any) {
+    console.error('Error al buscar turno:', error);
     res.status(500).json({ message: error.message });
   }
 }
@@ -163,7 +170,7 @@ async function add(req: Request, res: Response) {
 
     // Crear y guardar el turno
     const turno = em.create(Turno, {
-      estado: EstadoTurno.PENDIENTE,
+      estado: EstadoTurno.AGENDADO,
       fechaHora,
       mascota,
       veterinario,

@@ -4,6 +4,7 @@ import { ORM } from '../shared/db/orm.js';
 import { Horario } from '../Horario/horario.entity.js';
 import { Especie } from '../Especie/especie.entity.js';
 import bcrypt from 'bcrypt';
+import { Calificacion } from '../Calificacion/calificacion.entity.js';
 
 const em = ORM.em;
 //date
@@ -21,6 +22,7 @@ function sanitizeVeterinarioInput(
     nroTelefono: req.body.nroTelefono,
     email: req.body.email,
     contrasenia: req.body.contrasenia,
+    promedio: req.body.promedio,
     horarios: req.body.horarios,
     turnos: req.body.turnos,
     especies: req.body.especies,
@@ -187,4 +189,28 @@ async function remove(req: Request, res: Response) {
   }
 }
 
-export { sanitizeVeterinarioInput, findAll, findOne, add, update, remove };
+async function actualizarPromedio(veterinarioId: number) {
+  const calificaciones = await em.find(Calificacion, {
+    veterinario: veterinarioId,
+  });
+  const promedio = calificaciones.length
+    ? calificaciones.reduce((sum, c) => sum + c.puntuacion, 0) /
+      calificaciones.length
+    : null;
+
+  const veterinario = await em.findOne(Veterinario, { id: veterinarioId });
+  if (veterinario) {
+    veterinario.promedio = promedio;
+    await em.persistAndFlush(veterinario);
+  }
+}
+
+export {
+  sanitizeVeterinarioInput,
+  findAll,
+  findOne,
+  add,
+  update,
+  remove,
+  actualizarPromedio,
+};

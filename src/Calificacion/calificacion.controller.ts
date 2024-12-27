@@ -118,6 +118,7 @@ async function add(req: Request, res: Response) {
       return res.status(404).json({ message: 'Veterinario no encontrado.' });
     }
 
+    // Crear la nueva calificación
     const nuevaCalificacion = em.create(Calificacion, {
       veterinario,
       usuario: usuarioId,
@@ -129,12 +130,18 @@ async function add(req: Request, res: Response) {
       verificada: true, // Asumido como valor por defecto
     });
 
+    // **4. Persistir la calificación y asociarla al turno**
     await em.persistAndFlush(nuevaCalificacion);
+
+    // **5. Actualizar la relación del turno con la calificación**
+    turno.calificacion = nuevaCalificacion; // Asocia la calificación al turno
+    await em.persistAndFlush(turno); // Guardar el turno con la calificación asociada
 
     res
       .status(201)
       .json({ message: 'Reseña creada con éxito.', data: nuevaCalificacion });
   } catch (error: any) {
+    console.error('Error al agregar la calificación:', error);
     res.status(500).json({ message: error.message });
   }
 }

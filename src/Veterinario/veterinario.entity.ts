@@ -38,6 +38,9 @@ export class Veterinario {
   @Property({ nullable: false, unique: true })
   contrasenia!: string;
 
+  @Property({ nullable: true, type: 'float' })
+  promedio?: number | null; // Permitir null
+
   @OneToMany(() => Horario, (horario) => horario.veterinario, {
     cascade: [Cascade.ALL],
   })

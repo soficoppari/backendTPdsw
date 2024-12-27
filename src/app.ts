@@ -12,6 +12,7 @@ import { horarioRouter } from './Horario/horario.routes.js';
 import { razaRouter } from './Raza/raza.routes.js';
 import loginRouter from './Login/login.routes.js';
 import dotenv from 'dotenv';
+import { calificacionRouter } from './Calificacion/calificacion.routes.js';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use((req, res, next) => RequestContext.create(ORM.em, next));
 //antes de las rutas y middlewares de negocio
 
 app.use('/api/usuario', usuarioRouter);
+app.use('/api/calificacion', calificacionRouter);
 app.use('/api/mascota', mascotaRouter);
 app.use('/api/veterinario', veterinarioRouter);
 app.use('/api/especie', especieRouter);
