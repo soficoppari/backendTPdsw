@@ -46,7 +46,7 @@ function sanitizeCalificacionInput(
     verificada: verificada !== undefined ? Boolean(verificada) : false,
   };
 
-  next();
+  next();//prueba
 }
 
 async function findAll(req: Request, res: Response) {
