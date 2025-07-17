@@ -16,4 +16,4 @@ turnoRouter.get('/:id', findOne);
 turnoRouter.post('/', sanitizeTurnoInput, add);
 turnoRouter.put('/:id', sanitizeTurnoInput, update);
 turnoRouter.delete('/:id', sanitizeTurnoInput, remove);
-turnoRouter.patch('/turnos/:turnoId/completar', completarTurno);
+turnoRouter.patch('/:turnoId/completar', completarTurno);

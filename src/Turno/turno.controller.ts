@@ -15,6 +15,7 @@ function sanitizeTurnoInput(req: Request, res: Response, next: NextFunction) {
     id: req.body.id,
     estado: req.body.estado,
     fechaHora: req.body.fechaHora,
+    observaciones: req.body.observaciones,
     mascotaId: req.body.mascotaId,
     veterinarioId: req.body.veterinarioId,
     usuarioId: req.body.usuarioId,
@@ -191,14 +192,13 @@ async function add(req: Request, res: Response) {
 async function completarTurno(req: Request, res: Response) {
   try {
     const { turnoId } = req.params;
+    const { observaciones } = req.body;
 
-    // Buscar el turno
     const turno = await em.findOne(Turno, { id: parseInt(turnoId, 10) });
     if (!turno) {
       return res.status(404).json({ message: 'Turno no encontrado.' });
     }
 
-    // Verificar que la fecha del turno sea anterior o igual a la fecha actual
     const ahora = new Date();
     if (new Date(turno.fechaHora) > ahora) {
       return res.status(400).json({
@@ -206,16 +206,18 @@ async function completarTurno(req: Request, res: Response) {
       });
     }
 
-    // Cambiar el estado del turno a COMPLETADO
     turno.estado = EstadoTurno.COMPLETADO;
+    turno.observaciones = observaciones || null;
+
     await em.persistAndFlush(turno);
 
-    res.status(200).json({
-      message: 'El turno ha sido marcado como completado.',
-      data: turno,
+    return res.status(200).json({ message: 'Turno completado con éxito.' });
+  } catch (error) {
+    console.error('Error al completar el turno:', error); 
+    return res.status(500).json({
+      message: 'Error del servidor al completar el turno.',
+      error: error instanceof Error ? error.message : String(error),
     });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
   }
 }
 

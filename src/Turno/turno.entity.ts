@@ -23,6 +23,9 @@ export class Turno {
   @Property({ nullable: false, unique: true })
   fechaHora!: string;
 
+  @Property({ nullable: true })
+  observaciones?: string;
+
   @OneToOne(() => Calificacion, { nullable: true })
   calificacion?: Rel<Calificacion>; // Relación opcional con Calificacion
 
