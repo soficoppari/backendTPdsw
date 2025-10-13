@@ -30,7 +30,7 @@ export class Veterinario {
   direccion!: string;
 
   @Property({ nullable: false })
-  nroTelefono!: number;
+  nroTelefono!: string;
 
   @Property({ nullable: false, unique: true })
   email!: string;

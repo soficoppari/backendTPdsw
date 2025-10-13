@@ -2,6 +2,7 @@ import { MikroORM } from '@mikro-orm/mysql';
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 
 export const ORM = await MikroORM.init({
+  timezone: 'Z', // para UTC
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
   dbName: 'veterinaria',

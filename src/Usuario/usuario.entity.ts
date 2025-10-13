@@ -25,7 +25,7 @@ export class Usuario {
   email!: string;
 
   @Property()
-  nroTelefono!: number;
+  nroTelefono!: string;
 
   @Property({ nullable: false, unique: true })
   contrasenia!: string;

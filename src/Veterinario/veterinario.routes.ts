@@ -9,6 +9,7 @@ import {
   update,
   remove,
   actualizarPromedio,
+  horariosDisponibles, // <-- importa la función
 } from './veterinario.controller.js';
 
 const em = ORM.em;
@@ -61,3 +62,6 @@ veterinarioRouter.post('/:id/promedio', async (req, res) => {
     res.status(500).json({ message: 'Error al actualizar el promedio.' });
   }
 });
+
+// Nueva ruta para obtener los horarios disponibles de un veterinario en una fecha
+veterinarioRouter.get('/:id/horarios-disponibles', horariosDisponibles);
