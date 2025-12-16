@@ -1,6 +1,9 @@
 {
   "name": "backendtpdsw",
   "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": "18.x"
+  },
   "type": "module",
   "version": "1.0.0",
   "description": "",
