@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: 'http://localhost:5173', // Permite el frontend en localhost:3000 (o cualquier otro que uses)
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Métodos permitidos
     allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
   })
@@ -44,7 +44,9 @@ app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' });
 });
 
-await syncSchema(); //never in production
+if (process.env.NODE_ENV !== 'production') {
+  await syncSchema();
+}
 
 const PORT = process.env.PORT || 3000;
 

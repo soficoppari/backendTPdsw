@@ -1,27 +1,34 @@
 import { MikroORM } from '@mikro-orm/mysql';
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 
+const isProd = process.env.NODE_ENV === 'production';
+
 export const ORM = await MikroORM.init({
-  timezone: 'Z', // para UTC
+  timezone: 'Z',
+
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
-  dbName: 'veterinaria',
-  clientUrl: 'mysql://root:admin@localhost:3306/veterinaria',
-  highlighter: new SqlHighlighter(),
-  debug: true,
+
+  dbName: process.env.MYSQLDATABASE || 'veterinaria',
+  host: process.env.MYSQLHOST || 'localhost',
+  port: Number(process.env.MYSQLPORT) || 3306,
+  user: process.env.MYSQLUSER || 'root',
+  password: process.env.MYSQLPASSWORD || 'admin',
+
+  highlighter: !isProd ? new SqlHighlighter() : undefined,
+  debug: !isProd,
+
   schemaGenerator: {
-    //Never in Production, only in dev
     disableForeignKeys: true,
     createForeignKeyConstraints: true,
-    ignoreSchema: [],
   },
 });
 
+
 export const syncSchema = async () => {
-  const generator = ORM.getSchemaGenerator();
-  /*
-    await generator.dropSchema()
-    await generator.createSchema()
-    */
-  await generator.updateSchema();
+  if (process.env.NODE_ENV !== 'production') {
+    const generator = ORM.getSchemaGenerator();
+    await generator.updateSchema();
+  }
 };
+
