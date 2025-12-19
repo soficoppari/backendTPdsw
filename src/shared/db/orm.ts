@@ -9,11 +9,11 @@ export const ORM = await MikroORM.init({
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
 
-  dbName: process.env.MYSQLDATABASE || 'veterinaria',
-  host: process.env.MYSQLHOST || 'localhost',
-  port: Number(process.env.MYSQLPORT) || 3306,
-  user: process.env.MYSQLUSER || 'root',
-  password: process.env.MYSQLPASSWORD || 'admin',
+  dbName: isProd ? process.env.MYSQLDATABASE : 'veterinaria',
+  host: isProd ? process.env.MYSQLHOST : 'localhost',
+  port: isProd ? Number(process.env.MYSQLPORT) : 3306,
+  user: isProd ? process.env.MYSQLUSER : 'root',
+  password: isProd ? process.env.MYSQLPASSWORD : 'admin',
 
   highlighter: !isProd ? new SqlHighlighter() : undefined,
   debug: !isProd,
@@ -23,6 +23,7 @@ export const ORM = await MikroORM.init({
     createForeignKeyConstraints: true,
   },
 });
+
 
 
 export const syncSchema = async () => {
