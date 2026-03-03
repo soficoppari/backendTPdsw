@@ -326,7 +326,34 @@ async function completarTurno(req: Request, res: Response) {
 async function update(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id);
-    const turnoToUpdate = await em.findOneOrFail(Turno, { id });
+    const turnoToUpdate = await em.findOneOrFail(Turno, { id }, { populate: ['horario'] });
+
+    // Validación: No se puede cancelar con menos de 5 horas de antelación
+    if (req.body.sanitizedInput && req.body.sanitizedInput.estado === EstadoTurno.CANCELADO) {
+      const [h, m, s] = turnoToUpdate.horario.horaInicio.split(':');
+      const fechaTurno = new Date(
+        Date.UTC(
+          turnoToUpdate.fecha.getUTCFullYear(),
+          turnoToUpdate.fecha.getUTCMonth(),
+          turnoToUpdate.fecha.getUTCDate(),
+          Number(h),
+          Number(m),
+          Number(s || 0),
+          0
+        )
+      );
+
+      const ahora = new Date();
+      const diferenciaMs = fechaTurno.getTime() - ahora.getTime();
+      const diferenciaHoras = diferenciaMs / (1000 * 60 * 60);
+
+      if (diferenciaHoras < 5) {
+        return res.status(400).json({
+          message: 'No puedes cancelar un turno con menos de 5 horas de anticipación.',
+        });
+      }
+    }
+
     em.assign(turnoToUpdate, req.body.sanitizedInput);
     await em.flush();
     res.status(200).json({ message: 'turno updated', data: turnoToUpdate });
@@ -339,7 +366,36 @@ async function update(req: Request, res: Response) {
 async function remove(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id);
-    const turno = em.getReference(Turno, id);
+    const turno = await em.findOne(Turno, { id }, { populate: ['horario'] });
+
+    if (!turno) {
+      return res.status(404).json({ message: 'Turno no encontrado' });
+    }
+
+    // Validación: No se puede cancelar con menos de 5 horas de antelación
+    const [h, m, s] = turno.horario.horaInicio.split(':');
+    const fechaTurno = new Date(
+      Date.UTC(
+        turno.fecha.getUTCFullYear(),
+        turno.fecha.getUTCMonth(),
+        turno.fecha.getUTCDate(),
+        Number(h),
+        Number(m),
+        Number(s || 0),
+        0
+      )
+    );
+
+    const ahora = new Date();
+    const diferenciaMs = fechaTurno.getTime() - ahora.getTime();
+    const diferenciaHoras = diferenciaMs / (1000 * 60 * 60);
+
+    if (diferenciaHoras < 5) {
+      return res.status(400).json({
+        message: 'No puedes cancelar un turno con menos de 5 horas de anticipación.',
+      });
+    }
+
     await em.removeAndFlush(turno);
     res.status(200).json({ message: 'turno deleted' });
   } catch (error: any) {
