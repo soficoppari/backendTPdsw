@@ -30,4 +30,3 @@ dist/**/*
 ## built vscode extensions
 *.vsix
 
-.env

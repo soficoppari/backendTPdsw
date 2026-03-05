@@ -1,5 +1,5 @@
+import 'dotenv/config'; // <-- ESTO DEBE IR PRIMERO SIEMPRE
 import 'reflect-metadata';
-import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import { usuarioRouter } from './Usuario/usuario.routes.js';
 import { mascotaRouter } from './Mascota/mascota.routes.js';
@@ -13,12 +13,10 @@ import { turnoRouter } from './Turno/turno.routes.js';
 import { horarioRouter } from './Horario/horario.routes.js';
 import { razaRouter } from './Raza/raza.routes.js';
 import loginRouter from './Login/login.routes.js';
-import dotenv from 'dotenv';
 import { calificacionRouter } from './Calificacion/calificacion.routes.js';
+
 import { paymentRouter } from './Payment/payment.routes.js';
 import { initCancellationJob } from './shared/jobs/cancellation.job.js';
-
-dotenv.config();
 
 const app = express();
 app.use(express.json());
