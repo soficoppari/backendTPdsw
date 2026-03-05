@@ -5,6 +5,7 @@ import {
   PrimaryKey,
   Property,
   Rel,
+  OptionalProps,
 } from '@mikro-orm/core';
 import { Veterinario } from '../Veterinario/veterinario.entity.js';
 import { Mascota } from '../Mascota/mascota.entity.js';
@@ -15,6 +16,8 @@ import { Horario } from '../Horario/horario.entity.js';
 
 @Entity()
 export class Turno {
+  [OptionalProps]?: 'pagado' | 'estado';
+
   @PrimaryKey()
   id!: number;
 
@@ -38,6 +41,12 @@ export class Turno {
 
   @ManyToOne(() => Usuario, { nullable: false })
   usuario?: Rel<Usuario>;
+
+  @Property({ nullable: false, default: false })
+  pagado: boolean = false;
+
+  @Property({ nullable: true })
+  monto?: number;
 
   @ManyToOne(() => Horario, { nullable: false })
   horario!: Rel<Horario>; // vincula directamente al horario

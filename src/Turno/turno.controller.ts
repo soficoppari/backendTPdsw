@@ -128,6 +128,8 @@ async function findAll(req: Request, res: Response) {
             puntuacion: turno.calificacion.puntuacion,
           }
           : null,
+        pagado: turno.pagado,
+        monto: turno.monto,
       };
     });
 
@@ -221,6 +223,8 @@ async function findOne(req: Request, res: Response) {
           comentario: turno.calificacion.comentario ?? null,
         }
         : null,
+      pagado: turno.pagado,
+      monto: turno.monto,
     };
 
     res.status(200).json({ data: responseData });
@@ -279,6 +283,7 @@ async function add(req: Request, res: Response) {
       veterinario,
       usuario,
       horario,
+      pagado: false,
     });
 
     await em.persistAndFlush(turno);

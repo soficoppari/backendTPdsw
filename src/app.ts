@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import { usuarioRouter } from './Usuario/usuario.routes.js';
 import { mascotaRouter } from './Mascota/mascota.routes.js';
@@ -14,6 +15,8 @@ import { razaRouter } from './Raza/raza.routes.js';
 import loginRouter from './Login/login.routes.js';
 import dotenv from 'dotenv';
 import { calificacionRouter } from './Calificacion/calificacion.routes.js';
+import { paymentRouter } from './Payment/payment.routes.js';
+import { initCancellationJob } from './shared/jobs/cancellation.job.js';
 
 dotenv.config();
 
@@ -45,6 +48,7 @@ app.use('/api/horario', horarioRouter);
 app.use('/api/turno', turnoRouter);
 app.use('/api/raza', razaRouter);
 app.use('/api/login', loginRouter);
+app.use('/api/payment', paymentRouter);
 
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' });
@@ -59,4 +63,5 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  initCancellationJob();
 });
