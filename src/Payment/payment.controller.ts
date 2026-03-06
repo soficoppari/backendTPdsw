@@ -36,13 +36,14 @@ export async function createCheckoutSession(req: Request, res: Response) {
         const unitAmount = isDomestic ? PRICE_DOMESTIC : PRICE_OTHER;
 
         const stripeKey = process.env.STRIPE_SECRET_KEY || 'sk_test_tu_clave_aqui';
+        const frontendUrl = process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:5173';
 
         // Fallback para testing si no hay clave real
         if (stripeKey === 'sk_test_tu_clave_aqui') {
             console.warn('Usando MOCK de Stripe (Sin clave real)');
             return res.json({
                 id: 'mock_session_id',
-                url: `http://localhost:5173/Turnos?success=true&turnoId=${turno.id}`
+                url: `${frontendUrl}/Turnos?success=true&turnoId=${turno.id}`
             });
         }
 
@@ -62,8 +63,8 @@ export async function createCheckoutSession(req: Request, res: Response) {
                 },
             ],
             mode: 'payment',
-            success_url: `http://localhost:5173/Turnos?success=true&turnoId=${turno.id}`,
-            cancel_url: `http://localhost:5173/Turnos?canceled=true`,
+            success_url: `${frontendUrl}/Turnos?success=true&turnoId=${turno.id}`,
+            cancel_url: `${frontendUrl}/Turnos?canceled=true`,
             metadata: {
                 turnoId: turno.id.toString(),
                 monto: (unitAmount / 100).toString(),
