@@ -139,6 +139,7 @@ async function remove(req: Request, res: Response) {
     const id = Number.parseInt(req.params.id);
     const usuario = em.getReference(Usuario, id);
     await em.removeAndFlush(usuario);
+    res.status(200).json({ message: 'usuario deleted' });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
