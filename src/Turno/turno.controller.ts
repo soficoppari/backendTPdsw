@@ -53,6 +53,7 @@ async function findAll(req: Request, res: Response) {
 
     const turnos = await em.find(Turno, filter, {
       populate: ['mascota', 'veterinario', 'usuario', 'horario', 'calificacion'],
+      orderBy: { fecha: 'ASC', horario: { horaInicio: 'ASC' } } as any,
     });
 
     if (turnos.length === 0) {

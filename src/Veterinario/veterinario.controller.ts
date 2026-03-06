@@ -283,15 +283,17 @@ async function horariosDisponibles(req: Request, res: Response) {
   const disponibles = horarios.filter(h => !horariosOcupados.has(h.id));
   console.log('Horarios disponibles después de filtrar:', disponibles);
 
-  // 4. Mapear para frontend
-  res.json({
-    horariosDisponibles: disponibles.map(h => ({
+  // 4. Mapear para frontend y ordenar cronológicamente
+  const responseData = disponibles
+    .sort((a, b) => a.horaInicio.localeCompare(b.horaInicio))
+    .map(h => ({
       id: h.id,
       inicio: h.horaInicio?.slice(0, 5), // "08:00:00" -> "08:00"
       fin: h.horaFin?.slice(0, 5),
       diaSemana: h.diaSemana,
-    })),
-  });
+    }));
+
+  res.json({ horariosDisponibles: responseData });
 }
 
 export {
