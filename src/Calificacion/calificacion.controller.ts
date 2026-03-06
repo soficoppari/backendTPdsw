@@ -4,6 +4,7 @@ import { Veterinario } from '../Veterinario/veterinario.entity.js';
 import { Calificacion } from './calificacion.entity.js';
 import { Turno } from '../Turno/turno.entity.js';
 import { EstadoTurno } from '../Turno/turno.enum.js';
+import { detectarContenidoOfensivo } from '../shared/moderacion.js';
 
 const em = ORM.em;
 
@@ -46,7 +47,18 @@ function sanitizeCalificacionInput(
     verificada: verificada !== undefined ? Boolean(verificada) : false,
   };
 
-  next();//prueba
+  // Moderación: verificar que el comentario no contenga contenido ofensivo
+  if (req.body.sanitizedInput.comentario) {
+    const palabraDetectada = detectarContenidoOfensivo(req.body.sanitizedInput.comentario);
+    if (palabraDetectada) {
+      return res.status(400).json({
+        message:
+          'Tu reseña contiene contenido inapropiado (lenguaje ofensivo, insultos o discriminación). Por favor, modificá tu comentario antes de enviarlo.',
+      });
+    }
+  }
+
+  next();
 }
 
 async function findAll(req: Request, res: Response) {
