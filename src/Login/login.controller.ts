@@ -4,10 +4,10 @@ import jwt from 'jsonwebtoken';
 import { ORM } from '../shared/db/orm.js';
 import { Usuario } from '../Usuario/usuario.entity.js';
 import { Veterinario } from '../Veterinario/veterinario.entity.js';
-import dotenv from 'dotenv';
+// las variables de entorno ya se cargan en el arranque (\`src/app.ts\` usa `import 'dotenv/config'`)
+// así evitamos rutas relativas y búsquedas en `src/.env`
+// Nota: elimina cualquier archivo `.env` dentro de `src` para reducir confusiones.
 
-// Cargar las variables de entorno desde el archivo .env
-dotenv.config();
 
 const em = ORM.em;
 
