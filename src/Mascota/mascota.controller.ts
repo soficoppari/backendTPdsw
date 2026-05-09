@@ -3,7 +3,6 @@ import { ORM } from '../shared/db/orm.js';
 import { Mascota } from './mascota.entity.js';
 import { Usuario } from '../Usuario/usuario.entity.js';
 import { Raza } from '../Raza/raza.entity.js';
-import jwt from 'jsonwebtoken';
 
 const em = ORM.em;
 
@@ -29,21 +28,13 @@ function sanitizeMascotaInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
-    // Obtener el token desde los headers
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.split(' ')[1]; // Extraer el token de "Bearer <token>"
-
-    if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
+    // El middleware de autenticacion ya valido el token.
+    if (!req.authUser) {
+      return res.status(401).json({ message: 'Usuario no autenticado' });
     }
 
-    // Verificar y decodificar el token
-    const decodedToken: any = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    );
-    const usuarioId = decodedToken.id; // Extraer el usuarioId del token
-    console.log('Usuario ID extraído del token:', usuarioId);
+    const usuarioId = req.authUser.id;
+    console.log('Usuario ID extraido del token:', usuarioId);
 
     // Buscar las mascotas asociadas al usuario loggeado
     const mascotas = await em.find(

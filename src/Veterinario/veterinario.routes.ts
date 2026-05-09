@@ -12,6 +12,10 @@ import {
   actualizarPromedio,
   horariosDisponibles,
 } from './veterinario.controller.js';
+import {
+  authenticateToken,
+  authorizeRoles,
+} from '../shared/auth/auth.middleware.js';
 const em = ORM.em;
 
 export const veterinarioRouter = Router();
@@ -44,9 +48,27 @@ veterinarioRouter.get('/check-matricula/:matricula', async (req, res) => {
 
 veterinarioRouter.get('/:id', findOne);
 veterinarioRouter.post('/', sanitizeVeterinarioInput, add);
-veterinarioRouter.put('/:id', sanitizeVeterinarioInput, update);
-veterinarioRouter.patch('/:id', sanitizeVeterinarioInput, update);
-veterinarioRouter.delete('/:id', sanitizeVeterinarioInput, remove);
+veterinarioRouter.put(
+  '/:id',
+  authenticateToken,
+  authorizeRoles('veterinario'),
+  sanitizeVeterinarioInput,
+  update
+);
+veterinarioRouter.patch(
+  '/:id',
+  authenticateToken,
+  authorizeRoles('veterinario'),
+  sanitizeVeterinarioInput,
+  update
+);
+veterinarioRouter.delete(
+  '/:id',
+  authenticateToken,
+  authorizeRoles('veterinario'),
+  sanitizeVeterinarioInput,
+  remove
+);
 
 // Nueva ruta para obtener las calificaciones de un veterinario
 veterinarioRouter.get('/:id/calificaciones', async (req, res) => {
@@ -74,7 +96,7 @@ veterinarioRouter.get('/:id/calificaciones', async (req, res) => {
 });
 
 // Ruta para actualizar el promedio del veterinario
-veterinarioRouter.post('/:id/promedio', async (req, res) => {
+veterinarioRouter.post('/:id/promedio', authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   try {

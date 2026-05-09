@@ -7,8 +7,14 @@ import {
   update,
   remove,
 } from './horario.controller.js';
+import {
+  authenticateToken,
+  authorizeRoles,
+} from '../shared/auth/auth.middleware.js';
 
 export const horarioRouter = Router();
+
+horarioRouter.use(authenticateToken, authorizeRoles('veterinario'));
 
 horarioRouter.get('/', findAll);
 horarioRouter.get('/:id', findOne);

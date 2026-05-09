@@ -5,7 +5,6 @@ import { Mascota } from '../Mascota/mascota.entity.js';
 import { Veterinario } from '../Veterinario/veterinario.entity.js';
 import { Usuario } from '../Usuario/usuario.entity.js';
 import { Horario } from '../Horario/horario.entity.js';
-import jwt from 'jsonwebtoken';
 import { EstadoTurno } from './turno.enum.js';
 
 const em = ORM.em;
@@ -237,12 +236,11 @@ async function findOne(req: Request, res: Response) {
 // POST /turnos
 async function add(req: Request, res: Response) {
   try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'No token provided' });
+    if (!req.authUser) {
+      return res.status(401).json({ message: 'Usuario no autenticado' });
+    }
 
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
-    const usuarioId = decoded.id;
+    const usuarioId = req.authUser.id;
 
     const { mascotaId, veterinarioId, horarioId, fecha } = req.body;
 

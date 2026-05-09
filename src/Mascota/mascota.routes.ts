@@ -7,8 +7,14 @@ import {
   update,
   remove,
 } from './mascota.controller.js';
+import {
+  authenticateToken,
+  authorizeRoles,
+} from '../shared/auth/auth.middleware.js';
 
 export const mascotaRouter = Router();
+
+mascotaRouter.use(authenticateToken, authorizeRoles('usuario'));
 
 mascotaRouter.get('/', findAll); // Obtener todas las mascotas
 mascotaRouter.get('/:id', findOne); // Obtener una mascota por ID
