@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import jwt, { JwtPayload, TokenExpiredError } from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import pkg from 'jsonwebtoken';
+const { TokenExpiredError } = pkg;
 
 export type AuthRole = 'usuario' | 'veterinario';
 
