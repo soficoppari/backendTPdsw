@@ -79,10 +79,14 @@ async function add(req: Request, res: Response) {
     res.status(500).json({ message: error.message });
   }
 }
-
+//login 
 async function login(req: Request, res: Response) {
   try {
     const { email, contrasenia } = req.body;
+
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: 'JWT_SECRET no esta configurado.' });
+    }
 
     // Verificar si el usuario existe
     const usuario = await em.findOne(Usuario, { email });
@@ -102,7 +106,7 @@ async function login(req: Request, res: Response) {
     // Crear un token JWT
     const token = jwt.sign(
       { id: usuario.id, email: usuario.email, role: 'usuario' },
-      process.env.JWT_SECRET || 'tu_clave_secreta',
+      process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
@@ -112,6 +116,7 @@ async function login(req: Request, res: Response) {
       data: {
         email: usuario.email,
         token,
+        role: 'usuario',
         usuarioId: usuario.id,
       },
     }); // Asegúrate de devolver el email correcto
@@ -121,6 +126,7 @@ async function login(req: Request, res: Response) {
       .json({ message: 'Error interno del servidor', error: error.message });
   }
 }
+
 
 async function update(req: Request, res: Response) {
   try {
