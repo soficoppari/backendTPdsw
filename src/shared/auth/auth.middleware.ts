@@ -22,7 +22,7 @@ declare global {
 function isAuthUser(payload: string | JwtPayload): payload is AuthUser & JwtPayload {
   return (
     typeof payload !== 'string' &&
-    typeof payload.id === 'number' &&
+    (typeof payload.id === 'number' || typeof payload.id === 'string') &&
     typeof payload.email === 'string' &&
     (payload.role === 'usuario' || payload.role === 'veterinario')
   );
@@ -52,7 +52,7 @@ export function authenticateToken(
     }
 
     req.authUser = {
-      id: decoded.id,
+      id: Number(decoded.id),
       email: decoded.email,
       role: decoded.role,
     };
