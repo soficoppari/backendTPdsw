@@ -11,6 +11,7 @@
     "strict": true,
     "alwaysStrict": true,
     "skipLibCheck": true,
+    "moduleResolution": "Bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
   },

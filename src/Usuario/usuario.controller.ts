@@ -101,9 +101,9 @@ async function login(req: Request, res: Response) {
 
     // Crear un token JWT
     const token = jwt.sign(
-      { id: usuario.id, email: usuario.email }, // Payload
-      'tu_clave_secreta', // Clave secreta (debes almacenarla de forma segura)
-      { expiresIn: '1h' } // Opciones del token (ej. caduca en 1 hora)
+      { id: usuario.id, email: usuario.email, role: 'usuario' },
+      process.env.JWT_SECRET || 'tu_clave_secreta',
+      { expiresIn: '1h' }
     );
 
     // Retornar usuario y token
