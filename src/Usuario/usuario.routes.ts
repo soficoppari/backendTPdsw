@@ -15,7 +15,7 @@ import {
 
 export const usuarioRouter = Router();
 usuarioRouter.get('/', authenticateToken, authorizeRoles('usuario'), findAll);
-usuarioRouter.get('/:id', authenticateToken, authorizeRoles('usuario'), findOne);
+usuarioRouter.get('/:id', authenticateToken, findOne);
 usuarioRouter.post('/', sanitizeUsuarioInput, add);
 usuarioRouter.put(
   '/:id',
