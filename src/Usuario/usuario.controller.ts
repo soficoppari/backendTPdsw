@@ -55,6 +55,26 @@ async function findOne(req: Request, res: Response) {
   }
 }
 
+async function findAuthenticated(req: Request, res: Response) {
+  try {
+    if (!req.authUser) {
+      return res.status(401).json({ message: 'Usuario no autenticado' });
+    }
+
+    const usuario = await em.findOneOrFail(
+      Usuario,
+      { id: req.authUser.id },
+      { populate: ['mascotas'] }
+    );
+    res.status(200).json({ message: 'found usuario', data: usuario });
+  } catch (error: any) {
+    if (error.name === 'EntityNotFound') {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    res.status(500).json({ message: error.message });
+  }
+}
+
 async function add(req: Request, res: Response) {
   try {
     // Verifica si ya existe un usuario con el mismo email
@@ -151,4 +171,13 @@ async function remove(req: Request, res: Response) {
   }
 }
 
-export { sanitizeUsuarioInput, findAll, remove, update, findOne, add, login };
+export {
+  sanitizeUsuarioInput,
+  findAll,
+  remove,
+  update,
+  findOne,
+  findAuthenticated,
+  add,
+  login,
+};

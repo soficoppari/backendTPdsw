@@ -3,6 +3,7 @@ import {
   sanitizeUsuarioInput,
   findAll,
   findOne,
+  findAuthenticated,
   add,
   update,
   remove,
@@ -15,6 +16,12 @@ import {
 
 export const usuarioRouter = Router();
 usuarioRouter.get('/', authenticateToken, authorizeRoles('usuario'), findAll);
+usuarioRouter.get(
+  '/me',
+  authenticateToken,
+  authorizeRoles('usuario'),
+  findAuthenticated
+);
 usuarioRouter.get('/:id', authenticateToken, findOne);
 usuarioRouter.post('/', sanitizeUsuarioInput, add);
 usuarioRouter.put(
